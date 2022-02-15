@@ -80,6 +80,7 @@ void sendURL(int command, const char* strAppend, std::string& feedback)
     case IDC_BUTTON_SENDEXP3:
         {
             std::string str(_URL_COMMAND_EXPLICITECOMMAND_);
+            str += "?ch=0&dcc=";
             if (strAppend != nullptr)
                 str += strAppend;
             send_URL(str.c_str ());

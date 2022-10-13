@@ -1,6 +1,14 @@
+/*
+* SendURL.h
+*/
+
 #pragma once
 
+#include <string>
 
-void initURL();
-void closeURL();
-void sendURL(int command, const char * strAppend, std::string& feedback);
+
+void SendURL(
+    const char* ipAddress,
+    const char* channel,
+    const char* dccCommand,
+    std::string& feedback);

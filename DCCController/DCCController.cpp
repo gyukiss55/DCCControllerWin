@@ -125,7 +125,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
        1000,                   // 10 - milli second interval 
        (TIMERPROC)NULL);
 
-   initURL();
    //DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG_DCCControl), hWnd, DCCControlDlg);
    DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG_DCCMONITOR), hWnd, DCCMonitorDlg);
    hWndMain = hWnd;
@@ -154,17 +153,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Parse the menu selections:
             switch (wmId)
             {
-            case IDM_CONTROL_DCCCONTROL:
-                if (!IsWindow(hwndDCCControl)) {
-                    hwndDCCControl = CreateDialog(hInst,
-                        MAKEINTRESOURCE(IDD_DIALOG_DCCControl),
-                        hWnd,
-                        (DLGPROC)DCCControlDlg);
-                    ShowWindow(hwndDCCControl, SW_SHOW);
-
-                }
-//                DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_TEST), hWnd, DCCControlDlg);
-                break;
             case IDM_CONTROL_DCCMONITOR:
                 if (!IsWindow(hwndDCCMonitor)) {
                     hwndDCCMonitor = CreateDialog(hInst,
@@ -179,7 +167,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
             case IDM_EXIT:
-                closeURL();
                 DestroyWindow(hWnd);
                 break;
             default:
@@ -248,58 +235,3 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
-
-// Message handler for about box.
-INT_PTR CALLBACK DCCControlDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    char buffer[128];
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        return (INT_PTR)TRUE;
-
-    case WM_COMMAND:
-        switch (wParam) {
-        case IDC_BUTTON_BS0:
-        case IDC_BUTTON_BS1F:
-        case IDC_BUTTON_BS1B:
-        case IDC_BUTTON_BLF:
-        case IDC_BUTTON_BLB:
-        case IDC_BUTTON_A3S1F:
-        case IDC_BUTTON_A3S1B:
-            sendURL((int)wParam, nullptr, strDCCFeedback);
-            InvalidateRect(hWndMain, NULL, TRUE);
-            break;
-        case IDC_BUTTON_SENDEXP1:
-            {
-                GetDlgItemTextA(hDlg, IDC_EDIT_EXPLICITE1, buffer, sizeof(buffer));
-                sendURL((int)wParam, buffer, strDCCFeedback);
-                InvalidateRect(hWndMain, NULL, TRUE);
-                break;
-            }
-        case IDC_BUTTON_SENDEXP2:
-            {
-                GetDlgItemTextA(hDlg, IDC_EDIT_EXPLICITE2, buffer, sizeof(buffer));
-                sendURL((int)wParam, buffer, strDCCFeedback);
-                InvalidateRect(hWndMain, NULL, TRUE);
-                break;
-            }
-        case IDC_BUTTON_SENDEXP3:
-            {
-                GetDlgItemTextA(hDlg, IDC_EDIT_EXPLICITE3, buffer, sizeof(buffer));
-                sendURL((int)wParam, buffer, strDCCFeedback);
-                InvalidateRect(hWndMain, NULL, TRUE);
-                break;
-            }
-        }
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-        {
-            EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
-        }
-        break;
-    }
-    return (INT_PTR)FALSE;
-}
-

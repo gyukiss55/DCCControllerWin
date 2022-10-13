@@ -23,7 +23,7 @@
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "80"
 
-int __cdecl ClientSendRec(const char* serverName, const char* sendText, std::string& receiveText)
+int32_t __cdecl ClientSendRec(const char* serverName, const char* sendText, std::string& receiveText)
 {
     WSADATA wsaData;
     SOCKET ConnectSocket = INVALID_SOCKET;

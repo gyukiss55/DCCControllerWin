@@ -42,11 +42,11 @@
     <ClInclude Include="SliderControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RegistryIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DCCController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SendURL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,6 +57,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DCCMonitorDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RegistryIO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DCCController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

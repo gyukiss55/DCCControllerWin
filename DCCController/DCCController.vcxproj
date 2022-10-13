@@ -139,18 +139,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ClientSendRec.h" />
     <ClInclude Include="DCCController.h" />
+    <ClInclude Include="DCCMonitorDialog.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="SliderControl.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SendURL.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WEBGetCommand.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClientSendRec.cpp" />
     <ClCompile Include="DCCController.cpp" />
+    <ClCompile Include="DCCMonitorDialog.cpp" />
     <ClCompile Include="SendURL.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories);G:\Work\GitHub\curl-7.81.0-win64-mingw\include;$(_ZVcpkgCurrentInstalledDir)include</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories);G:\Work\GitHub\curl-7.81.0-win64-mingw\include;$(_ZVcpkgCurrentInstalledDir)include</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="WEBGetCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DCCController.rc" />

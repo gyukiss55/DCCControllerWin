@@ -30,12 +30,33 @@
     <ClInclude Include="SendURL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ClientSendRec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WEBGetCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCCMonitorDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SliderControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DCCController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SendURL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientSendRec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WEBGetCommand.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DCCMonitorDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

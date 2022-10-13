@@ -5,7 +5,7 @@
 #include "framework.h"
 #include "DCCController.h"
 #include "SendURL.h"
-
+#include "DCCMonitorDialog.h"
 
 #define MAX_LOADSTRING 100
 
@@ -15,6 +15,7 @@ WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
 HWND hwndDCCControl = 0;
+HWND hwndDCCMonitor = 0;
 HWND hWndMain = 0;
 
 std::string strLocalTime;
@@ -125,7 +126,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
        (TIMERPROC)NULL);
 
    initURL();
-   DialogBox(hInstance, MAKEINTRESOURCE(IDD_DCCCONTROLLER_DIALOG), hWnd, DCCControlDlg);
+   //DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG_DCCControl), hWnd, DCCControlDlg);
+   DialogBox(hInstance, MAKEINTRESOURCE(IDD_DIALOG_DCCMONITOR), hWnd, DCCMonitorDlg);
    hWndMain = hWnd;
    return TRUE;
 }
@@ -162,6 +164,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 }
 //                DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_TEST), hWnd, DCCControlDlg);
+                break;
+            case IDM_CONTROL_DCCMONITOR:
+                if (!IsWindow(hwndDCCMonitor)) {
+                    hwndDCCMonitor = CreateDialog(hInst,
+                        MAKEINTRESOURCE(IDD_DIALOG_DCCMONITOR),
+                        hWnd,
+                        (DLGPROC)DCCMonitorDlg);
+                    ShowWindow(hwndDCCMonitor, SW_SHOW);
+                }
+                //                DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_TEST), hWnd, DCCControlDlg);
                 break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -290,3 +302,4 @@ INT_PTR CALLBACK DCCControlDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
     }
     return (INT_PTR)FALSE;
 }
+

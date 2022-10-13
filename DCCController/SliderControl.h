@@ -1,0 +1,6 @@
+/*
+ * SliderControl.h
+*/
+
+
+#pragma once

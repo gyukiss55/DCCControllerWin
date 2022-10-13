@@ -1,8 +1,8 @@
 // DCCController.cpp : Defines the entry point for the application.
 //
 
-#include <string>
 #include "framework.h"
+#include <string>
 #include "DCCController.h"
 #include "SendURL.h"
 #include "DCCMonitorDialog.h"
@@ -29,11 +29,16 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    DCCControlDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
+
+int mainCreateSliderControl();
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+
+    //mainCreateSliderControl();
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 

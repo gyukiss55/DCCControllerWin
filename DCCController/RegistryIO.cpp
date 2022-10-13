@@ -1,8 +1,8 @@
 /*
 * RegistryIO.cpp
 */
-#include <string>
 #include "framework.h"
+#include <string>
 
 #include "RegistryIO.h"
 

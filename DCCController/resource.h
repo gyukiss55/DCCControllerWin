@@ -3,7 +3,6 @@
 // Used by DCCController.rc
 //
 #define IDC_MYICON                      2
-#define IDB_SAVE                        3
 #define IDC_BUTTON_SAVE                 3
 #define IDC_BUTTON_READ                 4
 #define IDD_DIALOG_DCCMONITOR           9
@@ -120,6 +119,7 @@
 #define IDC_RADIO_CROSSRIGHT_1_9        1089
 #define IDC_RADIO_CROSSLEFT_1_10        1090
 #define IDC_RADIO_CROSSRIGHT_1_10       1091
+#define IDC_SLIDER1                     1092
 #define IDM_CONTROL_DCCCONTROL          32772
 #define ID_CONTROL_DCC                  32773
 #define ID_CONTROL_DCC_MONITOR          32774
@@ -134,7 +134,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         1061
+#define _APS_NEXT_CONTROL_VALUE         1094
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientSendRec.cpp" />
+    <ClCompile Include="CustomSliderTest.cpp" />
     <ClCompile Include="DCCController.cpp" />
     <ClCompile Include="DCCMonitorDialog.cpp" />
     <ClCompile Include="RegistryIO.cpp" />

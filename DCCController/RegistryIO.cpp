@@ -26,6 +26,6 @@ bool ReadRegistry(const char* key, std::string& str_data)
 bool WriteRegistry(const char* key, const char* str_data)
 {
     auto openRes = RegOpenKeyA(HKEY_CURRENT_USER, sk, &registry_key);
-    LONG setRes = RegSetValueExA(registry_key, key, 0, REG_EXPAND_SZ, (const BYTE *)str_data, strlen (str_data));
+    LONG setRes = RegSetValueExA(registry_key, key, 0, REG_EXPAND_SZ, (const BYTE *)str_data, (DWORD)strlen (str_data));
     return setRes == 0;
 }

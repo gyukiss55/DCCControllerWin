@@ -8,3 +8,4 @@ DCC Controller Windows
 5. V1.04.00 WebClient
 6. V1.05.00 Registry
 7. V1.06.00 Sliders, buttons send DCC commands
+8. V1.07.00 lambda function in DLG

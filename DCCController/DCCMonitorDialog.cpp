@@ -59,6 +59,34 @@ const uint32_t rids2[] = {
     0
 };
 
+
+const uint32_t rids3[] = {
+    IDC_BUTTON_SF3,
+    IDC_BUTTON_SB3,
+    IDC_BUTTON_SS3,
+
+    IDC_BUTTON_MP31,
+    IDC_BUTTON_MP32,
+    IDC_BUTTON_MP33,
+    IDC_BUTTON_MP34,
+    IDC_BUTTON_MP35,
+
+    0
+};
+const uint32_t rids4[] = {
+    IDC_BUTTON_SF4,
+    IDC_BUTTON_SB4,
+    IDC_BUTTON_SS4,
+
+    IDC_BUTTON_MP41,
+    IDC_BUTTON_MP42,
+    IDC_BUTTON_MP43,
+    IDC_BUTTON_MP44,
+    IDC_BUTTON_MP45,
+
+    0
+};
+
 static uint32_t idcEditNodes[] = { 
     IDC_EDIT_NODEADDRESS1,
     IDC_EDIT_NODEADDRESS2,
@@ -81,40 +109,58 @@ HWND hScrb2 = 0;
 HWND hScrb3 = 0;
 
 bool SendDCCSpeedCommand(HWND hDlg, int node, int pos);
+bool InitSliders(HWND hDlg);
 
 // Message handler for about box.
 INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    auto initSliders([](HWND hDlg)
+    {
+        int pos1 = 0;
+        int pos2 = 0;
+        int actpos = 0;
+
+        hScrb0 = GetDlgItem(hDlg, idcScrollbars[0]);
+        hScrb1 = GetDlgItem(hDlg, idcScrollbars[1]);
+        hScrb2 = GetDlgItem(hDlg, idcScrollbars[2]);
+        hScrb3 = GetDlgItem(hDlg, idcScrollbars[3]);
+        SendMessage(hScrb0, TBM_SETRANGEMIN, 1, SLIDER_MIN);
+        SendMessage(hScrb0, TBM_SETRANGEMAX, 1, SLIDER_MAX);
+        SendMessage(hScrb0, TBM_SETPOS, 1, 0);
+        SendMessage(hScrb1, TBM_SETRANGEMIN, 1, SLIDER_MIN);
+        SendMessage(hScrb1, TBM_SETRANGEMAX, 1, SLIDER_MAX);
+        SendMessage(hScrb1, TBM_SETPOS, 1, 0);
+        SendMessage(hScrb2, TBM_SETRANGEMIN, 1, SLIDER_MIN);
+        SendMessage(hScrb2, TBM_SETRANGEMAX, 1, SLIDER_MAX);
+        SendMessage(hScrb2, TBM_SETPOS, 1, 0);
+        SendMessage(hScrb3, TBM_SETRANGEMIN, 1, SLIDER_MIN);
+        SendMessage(hScrb3, TBM_SETRANGEMAX, 1, SLIDER_MAX);
+        SendMessage(hScrb3, TBM_SETPOS, 1, 0);
+
+        ReadDCCDlgContent(hDlg, strDCCFeedback);
+
+    });
+
+
+    auto executeButtonCommand([](HWND hDlg, WPARAM wParam, const uint32_t* rids, HWND hScrb, const char* nodeStr)
+    {
+        if (wParam == rids[0])
+            SendMessage(hScrb, TBM_SETPOS, 1, SLIDER_MAX);
+        if (wParam == rids[1])
+            SendMessage(hScrb, TBM_SETPOS, 1, SLIDER_MIN);
+        if (wParam == rids[2])
+            SendMessage(hScrb, TBM_SETPOS, 1, 0);
+
+        ExecuteCommand(hDlg, wParam, nodeStr, rids);
+
+    });
+
     UNREFERENCED_PARAMETER(lParam);
-    char buffer[128];
     switch (message)
     {
     case WM_INITDIALOG:
         {
-            int pos1 = 0;
-            int pos2 = 0;
-            int actpos = 0;
-
-            SCROLLBARINFO gsbi;
-            hScrb0 = GetDlgItem(hDlg, idcScrollbars[0]);
-            hScrb1 = GetDlgItem(hDlg, idcScrollbars[1]);
-            hScrb2 = GetDlgItem(hDlg, idcScrollbars[2]);
-            hScrb3 = GetDlgItem(hDlg, idcScrollbars[3]);
-            SendMessage(hScrb0, TBM_SETRANGEMIN, 1, SLIDER_MIN);
-            SendMessage(hScrb0, TBM_SETRANGEMAX, 1, SLIDER_MAX);
-            SendMessage(hScrb0, TBM_SETPOS, 1, 0);
-            SendMessage(hScrb1, TBM_SETRANGEMIN, 1, SLIDER_MIN);
-            SendMessage(hScrb1, TBM_SETRANGEMAX, 1, SLIDER_MAX);
-            SendMessage(hScrb1, TBM_SETPOS, 1, 0);
-            SendMessage(hScrb2, TBM_SETRANGEMIN, 1, SLIDER_MIN);
-            SendMessage(hScrb2, TBM_SETRANGEMAX, 1, SLIDER_MAX);
-            SendMessage(hScrb2, TBM_SETPOS, 1, 0);
-            SendMessage(hScrb3, TBM_SETRANGEMIN, 1, SLIDER_MIN);
-            SendMessage(hScrb3, TBM_SETRANGEMAX, 1, SLIDER_MAX);
-            SendMessage(hScrb3, TBM_SETPOS, 1, 0);
-
-            ReadDCCDlgContent(hDlg, strDCCFeedback);
-
+            initSliders(hDlg);
         }
         return (INT_PTR)TRUE;
     case WM_HSCROLL:
@@ -122,12 +168,12 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
         {
             auto action = LOWORD(wParam);
             HWND hScroll = (HWND)lParam;
-            int16_t pos = 0;
+            int pos = 0;
             if (action == SB_PAGERIGHT ||
                 action == SB_PAGELEFT ||
                 action == SB_THUMBPOSITION ||
                 action == SB_THUMBTRACK) {
-                pos = SendMessage(hScroll, TBM_GETPOS, 0, 0);
+                pos = (int)SendMessage(hScroll, TBM_GETPOS, 0, 0);
             } else
                 break;
 
@@ -160,18 +206,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP13:
             case IDC_BUTTON_MP14:
             case IDC_BUTTON_MP15:
-                {
-                    const char* nodeStr = "0";
-                    const uint32_t* rids = rids1;
-                    if (wParam == IDC_BUTTON_SB1)
-                        SendMessage(hScrb0, TBM_SETPOS, 1, SLIDER_MIN);
-                    if (wParam == IDC_BUTTON_SF1)
-                        SendMessage(hScrb0, TBM_SETPOS, 1, SLIDER_MAX);
-                    if (wParam == IDC_BUTTON_SS1)
-                        SendMessage(hScrb0, TBM_SETPOS, 1, 0);
-
-                    ExecuteCommand(hDlg, wParam, nodeStr, rids);
-                }
+                executeButtonCommand(hDlg, wParam, rids1, hScrb0, "0");
                 break;
             case IDC_BUTTON_SB2:
             case IDC_BUTTON_SF2:
@@ -181,18 +216,27 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP23:
             case IDC_BUTTON_MP24:
             case IDC_BUTTON_MP25:
-                {
-                    const char* nodeStr = "1";
-                    const uint32_t* rids = rids2;
-                    if (wParam == IDC_BUTTON_SB2)
-                        SendMessage(hScrb1, TBM_SETPOS, 1, SLIDER_MIN);
-                    if (wParam == IDC_BUTTON_SF2)
-                        SendMessage(hScrb1, TBM_SETPOS, 1, SLIDER_MAX);
-                    if (wParam == IDC_BUTTON_SS2)
-                        SendMessage(hScrb1, TBM_SETPOS, 1, 0);
-
-                    ExecuteCommand(hDlg, wParam, nodeStr, rids);
-                }
+                executeButtonCommand(hDlg, wParam, rids2, hScrb1, "1");
+                break;
+            case IDC_BUTTON_SB3:
+            case IDC_BUTTON_SF3:
+            case IDC_BUTTON_SS3:
+            case IDC_BUTTON_MP31:
+            case IDC_BUTTON_MP32:
+            case IDC_BUTTON_MP33:
+            case IDC_BUTTON_MP34:
+            case IDC_BUTTON_MP35:
+                executeButtonCommand(hDlg, wParam, rids3, hScrb2, "2");
+                break;
+            case IDC_BUTTON_SB4:
+            case IDC_BUTTON_SF4:
+            case IDC_BUTTON_SS4:
+            case IDC_BUTTON_MP41:
+            case IDC_BUTTON_MP42:
+            case IDC_BUTTON_MP43:
+            case IDC_BUTTON_MP44:
+            case IDC_BUTTON_MP45:
+                executeButtonCommand(hDlg, wParam, rids4, hScrb3, "3");
                 break;
             case IDC_BUTTON_SAVE:
                 {
@@ -335,3 +379,4 @@ bool SendDCCSpeedCommand(HWND hDlg, int node, int pos)
     InvalidateRect(hWndMain, NULL, TRUE);
     return true;
 }
+

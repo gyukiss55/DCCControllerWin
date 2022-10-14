@@ -11,3 +11,4 @@ DCC Controller Windows
 8.  V1.07.00 lambda function in DLG
 9.  V1.08.00 radio buttons DCC commands
 10. V1.09.00 DCC commands tested but no ts 
+11. V1.11.00 DCC commands tested and ts 

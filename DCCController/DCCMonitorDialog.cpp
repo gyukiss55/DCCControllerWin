@@ -13,9 +13,12 @@
 #define SLIDER_MIN -15
 #define SLIDER_MAX 15
 
+int32_t timeStampDCCCommands = 0;
+
 bool SaveDCCDlgContent(HWND hDlg, std::string& feedback);
 bool ReadDCCDlgContent(HWND hDlg, std::string& feedback);
 bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrID, const char* nodeStr, const uint32_t* rids);
+bool AppendTimeStamp(std::string& dccCommand);
 
 const char* dccCommandsPushButton[] = {
     "6F",   // forward full speed
@@ -150,7 +153,7 @@ HWND hScrb1 = 0;
 HWND hScrb2 = 0;
 HWND hScrb3 = 0;
 
-bool SendDCCSpeedCommand(HWND hDlg, int node, int pos);
+bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos);
 bool InitSliders(HWND hDlg);
 
 // Message handler for about box.
@@ -228,19 +231,24 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
                 break;
 
             int node = -1;
+            uint32_t nodeCtrlID = 0;
             if (hScroll == hScrb0) {
                 node = 0;
+                nodeCtrlID = IDC_EDIT_NODEADDRESS1;
             } else if (hScroll == hScrb1) {
                 node = 1;
+                nodeCtrlID = IDC_EDIT_NODEADDRESS2;
             } else if (hScroll == hScrb2) {
                 node = 2;
+                nodeCtrlID = IDC_EDIT_NODEADDRESS3;
             } else if (hScroll == hScrb3) {
                 node = 3;
+                nodeCtrlID = IDC_EDIT_NODEADDRESS4;
             }
             else
                 break;
 
-            SendDCCSpeedCommand(hDlg, node, pos);
+            SendDCCSpeedCommand(hDlg, nodeCtrlID, node, pos);
 
         }
         break;
@@ -429,6 +437,7 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
         WM_GETTEXT,
         (WPARAM)sizeof(ipAddr),
         (LPARAM)ipAddr);
+
     char nodeID[10];
     SendDlgItemMessageA(hDlg,
         nodeCntrId,
@@ -437,45 +446,71 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
         (LPARAM)nodeID);
     std::string dccCommand(nodeID);
     dccCommand += dccCommandPart2;
+
+    AppendTimeStamp(dccCommand);
+
     SendURL(ipAddr, nodeStr, dccCommand.c_str (), strDCCFeedback);
     InvalidateRect(hWndMain, NULL, TRUE);
     return true;
 }
 
-bool SendDCCSpeedCommand(HWND hDlg, int node, int pos)
+bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos)
 {
     char ipAddr[20];
-    char dccCommand[3] = { '4', '0', 0 };
+    char dccCommandPart2[3] = { '4', '0', 0 };
     char nodeStr[2] = { '0', 0 };
 
     nodeStr[0] = '0' + (uint8_t)node;
     if (pos > 0 && pos <= SLIDER_MAX) {
-        dccCommand[0] = '6';
+        dccCommandPart2[0] = '6';
         if (pos < 10)
-            dccCommand[1] = '0' + pos;
+            dccCommandPart2[1] = '0' + pos;
         else
-            dccCommand[1] = 'A' + pos - 10;
+            dccCommandPart2[1] = 'A' + pos - 10;
     }
     else if (pos < 0 && pos >= SLIDER_MIN) {
-        dccCommand[0] = '4';
+        dccCommandPart2[0] = '4';
         if (pos > -10)
-            dccCommand[1] = '0' +(- pos);
+            dccCommandPart2[1] = '0' +(- pos);
         else
-            dccCommand[1] = 'A' +(- pos - 10);
+            dccCommandPart2[1] = 'A' +(- pos - 10);
     }
     else if (pos == 0) {
-        dccCommand[0] = '4';
-        dccCommand[1] = '0';
+        dccCommandPart2[0] = '6';
+        dccCommandPart2[1] = '0';
     }
     else if (pos != 0)
         return false;
+  
     SendDlgItemMessageA(hDlg,
         IDC_EDIT_IPADDRESS,
         WM_GETTEXT,
         (WPARAM)sizeof(ipAddr),
         (LPARAM)ipAddr);
-    SendURL(ipAddr, nodeStr, dccCommand, strDCCFeedback);
+
+    char nodeID[10];
+    SendDlgItemMessageA(hDlg,
+        nodeCntrId,
+        WM_GETTEXT,
+        (WPARAM)sizeof(nodeID),
+        (LPARAM)nodeID);
+
+    std::string dccCommand(nodeID);
+    dccCommand += dccCommandPart2;
+
+    AppendTimeStamp(dccCommand);
+
+    SendURL(ipAddr, nodeStr, dccCommand.c_str (), strDCCFeedback);
     InvalidateRect(hWndMain, NULL, TRUE);
+    return true;
+}
+
+bool AppendTimeStamp(std::string& dccCommand)
+{
+    char buffer[32];
+    ++timeStampDCCCommands;
+    sprintf_s(buffer, "%04X", timeStampDCCCommands);
+    dccCommand += buffer;
     return true;
 }
 

@@ -9,3 +9,4 @@ DCC Controller Windows
 6. V1.05.00 Registry
 7. V1.06.00 Sliders, buttons send DCC commands
 8. V1.07.00 lambda function in DLG
+9. V1.08.00 radio buttons DCC commands

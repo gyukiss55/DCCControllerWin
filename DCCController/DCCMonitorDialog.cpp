@@ -17,7 +17,7 @@ bool SaveDCCDlgContent(HWND hDlg, std::string& feedback);
 bool ReadDCCDlgContent(HWND hDlg, std::string& feedback);
 bool ExecuteCommand(HWND hDlg, WPARAM wParam, const char* nodeStr, const uint32_t* rids);
 
-const char* dccCommands[] = {
+const char* dccCommandsPushButton[] = {
     "6F",   // forward full speed
     "4F",   // backward full speed
     "60",   // stop
@@ -30,6 +30,22 @@ const char* dccCommands[] = {
 
     nullptr
 };
+
+const char* dccCommandsRadioButton[] = {
+    "90",   // cross 0 left
+    "A0",   // cross 0 right
+    "91",   // cross 1 left
+    "A1",   // cross 1 right
+    "92",   // cross 2 left
+    "A2",   // cross 2 right
+    "93",   // cross 3 left
+    "A3",   // cross 3 right
+    "94",   // cross 4 left
+    "A4",   // cross 4 right
+
+    nullptr
+};
+
 
 const uint32_t rids1[] = {
     IDC_BUTTON_SF1,
@@ -87,6 +103,32 @@ const uint32_t rids4[] = {
     0
 };
 
+const uint32_t rids5[] = {
+    IDC_RADIO_CROSSLEFT_1_1,
+    IDC_RADIO_CROSSRIGHT_1_1,
+    IDC_RADIO_CROSSLEFT_1_2,
+    IDC_RADIO_CROSSRIGHT_1_2,
+    IDC_RADIO_CROSSLEFT_1_3,
+    IDC_RADIO_CROSSRIGHT_1_3,
+    IDC_RADIO_CROSSLEFT_1_4,
+    IDC_RADIO_CROSSRIGHT_1_4,
+    IDC_RADIO_CROSSLEFT_1_5,
+    IDC_RADIO_CROSSRIGHT_1_5
+};
+
+const uint32_t rids6[] = {
+    IDC_RADIO_CROSSLEFT_2_1,
+    IDC_RADIO_CROSSRIGHT_2_1,
+    IDC_RADIO_CROSSLEFT_2_2,
+    IDC_RADIO_CROSSRIGHT_2_2,
+    IDC_RADIO_CROSSLEFT_2_3,
+    IDC_RADIO_CROSSRIGHT_2_3,
+    IDC_RADIO_CROSSLEFT_2_4,
+    IDC_RADIO_CROSSRIGHT_2_4,
+    IDC_RADIO_CROSSLEFT_2_5,
+    IDC_RADIO_CROSSRIGHT_2_5
+};
+
 static uint32_t idcEditNodes[] = { 
     IDC_EDIT_NODEADDRESS1,
     IDC_EDIT_NODEADDRESS2,
@@ -142,7 +184,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
     });
 
 
-    auto executeButtonCommand([](HWND hDlg, WPARAM wParam, const uint32_t* rids, HWND hScrb, const char* nodeStr)
+    auto executePushButtonCommand([](HWND hDlg, WPARAM wParam, const uint32_t* rids, HWND hScrb, const char* nodeStr)
     {
         if (wParam == rids[0])
             SendMessage(hScrb, TBM_SETPOS, 1, SLIDER_MAX);
@@ -154,6 +196,12 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
         ExecuteCommand(hDlg, wParam, nodeStr, rids);
 
     });
+
+    auto executeRadioButtonCommand([](HWND hDlg, WPARAM wParam, const uint32_t* rids, const char* nodeStr)
+        {
+             ExecuteCommand(hDlg, wParam, nodeStr, rids);
+
+        });
 
     UNREFERENCED_PARAMETER(lParam);
     switch (message)
@@ -169,8 +217,10 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             auto action = LOWORD(wParam);
             HWND hScroll = (HWND)lParam;
             int pos = 0;
-            if (action == SB_PAGERIGHT ||
-                action == SB_PAGELEFT ||
+            if (action == SB_PAGELEFT ||
+                action == SB_PAGERIGHT ||
+                action == SB_LINELEFT ||
+                action == SB_LINERIGHT ||
                 action == SB_THUMBPOSITION ||
                 action == SB_THUMBTRACK) {
                 pos = (int)SendMessage(hScroll, TBM_GETPOS, 0, 0);
@@ -206,7 +256,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP13:
             case IDC_BUTTON_MP14:
             case IDC_BUTTON_MP15:
-                executeButtonCommand(hDlg, wParam, rids1, hScrb0, "0");
+                executePushButtonCommand(hDlg, wParam, rids1, hScrb0, "0");
                 break;
             case IDC_BUTTON_SB2:
             case IDC_BUTTON_SF2:
@@ -216,7 +266,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP23:
             case IDC_BUTTON_MP24:
             case IDC_BUTTON_MP25:
-                executeButtonCommand(hDlg, wParam, rids2, hScrb1, "1");
+                executePushButtonCommand(hDlg, wParam, rids2, hScrb1, "1");
                 break;
             case IDC_BUTTON_SB3:
             case IDC_BUTTON_SF3:
@@ -226,7 +276,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP33:
             case IDC_BUTTON_MP34:
             case IDC_BUTTON_MP35:
-                executeButtonCommand(hDlg, wParam, rids3, hScrb2, "2");
+                executePushButtonCommand(hDlg, wParam, rids3, hScrb2, "2");
                 break;
             case IDC_BUTTON_SB4:
             case IDC_BUTTON_SF4:
@@ -236,8 +286,35 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP43:
             case IDC_BUTTON_MP44:
             case IDC_BUTTON_MP45:
-                executeButtonCommand(hDlg, wParam, rids4, hScrb3, "3");
+                executePushButtonCommand(hDlg, wParam, rids4, hScrb3, "3");
                 break;
+
+            case IDC_RADIO_CROSSLEFT_1_1:
+            case IDC_RADIO_CROSSRIGHT_1_1:
+            case IDC_RADIO_CROSSLEFT_1_2:
+            case IDC_RADIO_CROSSRIGHT_1_2:
+            case IDC_RADIO_CROSSLEFT_1_3:
+            case IDC_RADIO_CROSSRIGHT_1_3:
+            case IDC_RADIO_CROSSLEFT_1_4:
+            case IDC_RADIO_CROSSRIGHT_1_4:
+            case IDC_RADIO_CROSSLEFT_1_5:
+            case IDC_RADIO_CROSSRIGHT_1_5:
+                executeRadioButtonCommand(hDlg, wParam, rids5, "4");
+                break;
+
+            case IDC_RADIO_CROSSLEFT_2_1:
+            case IDC_RADIO_CROSSRIGHT_2_1:
+            case IDC_RADIO_CROSSLEFT_2_2:
+            case IDC_RADIO_CROSSRIGHT_2_2:
+            case IDC_RADIO_CROSSLEFT_2_3:
+            case IDC_RADIO_CROSSRIGHT_2_3:
+            case IDC_RADIO_CROSSLEFT_2_4:
+            case IDC_RADIO_CROSSRIGHT_2_4:
+            case IDC_RADIO_CROSSLEFT_2_5:
+            case IDC_RADIO_CROSSRIGHT_2_5:
+                executeRadioButtonCommand(hDlg, wParam, rids6, "5");
+                break;
+
             case IDC_BUTTON_SAVE:
                 {
                     SaveDCCDlgContent(hDlg, strDCCFeedback);
@@ -325,14 +402,28 @@ bool ReadDCCDlgContent(HWND hDlg, std::string& feedback)
 
 bool ExecuteCommand(HWND hDlg, WPARAM wParam, const char* nodeStr, const uint32_t * rids)
 {
+    HWND hCtrl = GetDlgItem(hDlg, rids[0]);
+    LONG style = GetWindowLongA(hCtrl, GWL_STYLE);
+ //   LONG extStyle = GetWindowLongA(hCtrl, GWL_EXSTYLE);
 
-    char ipAddr[512];
     const char* dccCommand = nullptr;
-    for (int i = 0; rids[i] != 0; ++i) {
-        if (rids[i] == wParam)
-            dccCommand = dccCommands[i];
+    if (style & WS_GROUP) {
+        for (int i = 0; rids[i] != 0; ++i) {
+            if (rids[i] == wParam)
+                dccCommand = dccCommandsRadioButton[i];
+        }
+
+    }
+    else {
+        for (int i = 0; rids[i] != 0; ++i) {
+            if (rids[i] == wParam)
+                dccCommand = dccCommandsPushButton[i];
+        }
+
     }
 
+
+    char ipAddr[512];
     SendDlgItemMessageA(hDlg,
         IDC_EDIT_IPADDRESS,
         WM_GETTEXT,

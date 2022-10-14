@@ -1,9 +1,16 @@
+/*
+* SendURL.cpp
+*/
+
+#include "framework.h"
 #include <iostream>
 #include <string>
+#include <debugapi.h>
 
 #include "resource.h"
 #include "SendURL.h"
 #include "ClientSendRec.h"
+#include "WEBGetCommand.h"
 
 std::string strFeedback;
 
@@ -21,22 +28,36 @@ void SendURL(
     std::string& feedback)
 {
     strFeedback = "";
-        std::string str;
-    str += "/ec?ch=";
-    str += channel;
-    str += "&dcc=";
-    if (dccCommand != nullptr)
-        str += dccCommand;
+    std::string sendStr;
+    sendStr += "/ec?ch=";
+    sendStr += channel;
+    sendStr += "&dcc=";
+    
+    sendStr += dccCommand;
 
+    OutputDebugStringA("\nBefore Fill:\n");
+    OutputDebugStringA(sendStr.c_str ());
+
+    std::string sendString;
+    FillinSendString(sendString, sendStr.c_str (), ipAddress);
     std::string recString;
-    int32_t err = ClientSendRec(ipAddress, str.c_str(), recString);
+    OutputDebugStringA("\nAfter Fill:\n");
+    OutputDebugStringA(sendString.c_str());
+    int err = ClientSendRec(ipAddress, sendString.c_str(), recString);;
+    printf("ClientSendRec err:%d rec len:%zd rec str:#%s#\n", err, recString.length(), recString.c_str());
     if (err != 0) {
         strFeedback += "ClientSendRec ERROR!!";
 
     }
     else {
         strFeedback += "Send URL:";
-        strFeedback += str;
+        strFeedback += sendString;
+
+        strFeedback += " Response:";
+        strFeedback += recString;
+
+        OutputDebugStringA("\nRecString:\n");
+        OutputDebugStringA(recString.c_str ());
 
     }
 

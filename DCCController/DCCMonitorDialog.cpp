@@ -15,7 +15,7 @@
 
 bool SaveDCCDlgContent(HWND hDlg, std::string& feedback);
 bool ReadDCCDlgContent(HWND hDlg, std::string& feedback);
-bool ExecuteCommand(HWND hDlg, WPARAM wParam, const char* nodeStr, const uint32_t* rids);
+bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrID, const char* nodeStr, const uint32_t* rids);
 
 const char* dccCommandsPushButton[] = {
     "6F",   // forward full speed
@@ -184,7 +184,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
     });
 
 
-    auto executePushButtonCommand([](HWND hDlg, WPARAM wParam, const uint32_t* rids, HWND hScrb, const char* nodeStr)
+    auto executePushButtonCommand([](HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const uint32_t* rids, HWND hScrb, const char* nodeStr)
     {
         if (wParam == rids[0])
             SendMessage(hScrb, TBM_SETPOS, 1, SLIDER_MAX);
@@ -193,13 +193,13 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
         if (wParam == rids[2])
             SendMessage(hScrb, TBM_SETPOS, 1, 0);
 
-        ExecuteCommand(hDlg, wParam, nodeStr, rids);
+        ExecuteCommand(hDlg, wParam, nodeCntrId, nodeStr, rids);
 
     });
 
-    auto executeRadioButtonCommand([](HWND hDlg, WPARAM wParam, const uint32_t* rids, const char* nodeStr)
+    auto executeRadioButtonCommand([](HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const uint32_t* rids, const char* nodeStr)
         {
-             ExecuteCommand(hDlg, wParam, nodeStr, rids);
+             ExecuteCommand(hDlg, wParam, nodeCntrId, nodeStr, rids);
 
         });
 
@@ -256,7 +256,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP13:
             case IDC_BUTTON_MP14:
             case IDC_BUTTON_MP15:
-                executePushButtonCommand(hDlg, wParam, rids1, hScrb0, "0");
+                executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS1, rids1, hScrb0, "0");
                 break;
             case IDC_BUTTON_SB2:
             case IDC_BUTTON_SF2:
@@ -266,7 +266,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP23:
             case IDC_BUTTON_MP24:
             case IDC_BUTTON_MP25:
-                executePushButtonCommand(hDlg, wParam, rids2, hScrb1, "1");
+                executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS2, rids2, hScrb1, "1");
                 break;
             case IDC_BUTTON_SB3:
             case IDC_BUTTON_SF3:
@@ -276,7 +276,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP33:
             case IDC_BUTTON_MP34:
             case IDC_BUTTON_MP35:
-                executePushButtonCommand(hDlg, wParam, rids3, hScrb2, "2");
+                executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS3, rids3, hScrb2, "2");
                 break;
             case IDC_BUTTON_SB4:
             case IDC_BUTTON_SF4:
@@ -286,7 +286,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP43:
             case IDC_BUTTON_MP44:
             case IDC_BUTTON_MP45:
-                executePushButtonCommand(hDlg, wParam, rids4, hScrb3, "3");
+                executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS4, rids4, hScrb3, "3");
                 break;
 
             case IDC_RADIO_CROSSLEFT_1_1:
@@ -299,7 +299,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_RADIO_CROSSRIGHT_1_4:
             case IDC_RADIO_CROSSLEFT_1_5:
             case IDC_RADIO_CROSSRIGHT_1_5:
-                executeRadioButtonCommand(hDlg, wParam, rids5, "4");
+                executeRadioButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS5, rids5, "4");
                 break;
 
             case IDC_RADIO_CROSSLEFT_2_1:
@@ -312,7 +312,7 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_RADIO_CROSSRIGHT_2_4:
             case IDC_RADIO_CROSSLEFT_2_5:
             case IDC_RADIO_CROSSRIGHT_2_5:
-                executeRadioButtonCommand(hDlg, wParam, rids6, "5");
+                executeRadioButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS6, rids6, "5");
                 break;
 
             case IDC_BUTTON_SAVE:
@@ -400,43 +400,51 @@ bool ReadDCCDlgContent(HWND hDlg, std::string& feedback)
     return false;
 }
 
-bool ExecuteCommand(HWND hDlg, WPARAM wParam, const char* nodeStr, const uint32_t * rids)
+bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* nodeStr, const uint32_t * rids)
 {
     HWND hCtrl = GetDlgItem(hDlg, rids[0]);
     LONG style = GetWindowLongA(hCtrl, GWL_STYLE);
  //   LONG extStyle = GetWindowLongA(hCtrl, GWL_EXSTYLE);
 
-    const char* dccCommand = nullptr;
+    const char* dccCommandPart2 = nullptr;
     if (style & WS_GROUP) {
         for (int i = 0; rids[i] != 0; ++i) {
             if (rids[i] == wParam)
-                dccCommand = dccCommandsRadioButton[i];
+                dccCommandPart2 = dccCommandsRadioButton[i];
         }
 
     }
     else {
         for (int i = 0; rids[i] != 0; ++i) {
             if (rids[i] == wParam)
-                dccCommand = dccCommandsPushButton[i];
+                dccCommandPart2 = dccCommandsPushButton[i];
         }
 
     }
 
 
-    char ipAddr[512];
+    char ipAddr[20];
     SendDlgItemMessageA(hDlg,
         IDC_EDIT_IPADDRESS,
         WM_GETTEXT,
         (WPARAM)sizeof(ipAddr),
         (LPARAM)ipAddr);
-    SendURL(ipAddr, nodeStr, dccCommand, strDCCFeedback);
+    char nodeID[10];
+    SendDlgItemMessageA(hDlg,
+        nodeCntrId,
+        WM_GETTEXT,
+        (WPARAM)sizeof(nodeID),
+        (LPARAM)nodeID);
+    std::string dccCommand(nodeID);
+    dccCommand += dccCommandPart2;
+    SendURL(ipAddr, nodeStr, dccCommand.c_str (), strDCCFeedback);
     InvalidateRect(hWndMain, NULL, TRUE);
     return true;
 }
 
 bool SendDCCSpeedCommand(HWND hDlg, int node, int pos)
 {
-    char ipAddr[512];
+    char ipAddr[20];
     char dccCommand[3] = { '4', '0', 0 };
     char nodeStr[2] = { '0', 0 };
 

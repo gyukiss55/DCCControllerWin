@@ -24,7 +24,8 @@ const char* sendTextArray[] = {
 	"Referer: http://",
 	nullptr,
 	nullptr,
-	"\n",
+	"\n\n",
+
 //	"Accept-Encoding: gzip, deflate\n",
 //	"Accept-Language: hu-HU,hu;q=0.9,en-US;q=0.8,en;q=0.7\n\n\n\n",
 	nullptr,
@@ -69,7 +70,7 @@ int WEBGetConsolIO()
 	std::string sendString;
 	FillinSendString(sendString, "/ ", IP_ADDRESS_STR);
 	std::string recString;
-	int err = ClientSendRec("192.168.2.69", sendString.c_str (), recString);;
+	int err = ClientSendRec(IP_ADDRESS_STR, sendString.c_str (), recString);;
 	printf("ClientSendRec err:%d rec len:%zd rec str:#%s#\n", err, recString.length (), recString.c_str ());
 	for (bool run = true; run; ) {
 		char ch = getchar();
@@ -80,24 +81,24 @@ int WEBGetConsolIO()
 			break;
 		case '0':
 			FillinSendString(sendString, "/L ", IP_ADDRESS_STR);
-			err = ClientSendRec("192.168.2.69", sendString.c_str(), recString);
+			err = ClientSendRec(IP_ADDRESS_STR, sendString.c_str(), recString);
 			printf("ClientSendRec err:%d rec len:%zd rec str:#%s#\n", err, recString.length(), recString.c_str());
 			break;
 		case '1':
 			FillinSendString(sendString, "/H ", IP_ADDRESS_STR);
-			err = ClientSendRec("192.168.2.69", sendString.c_str(), recString);
+			err = ClientSendRec(IP_ADDRESS_STR, sendString.c_str(), recString);
 			printf("ClientSendRec err:%d rec len:%zd rec str:#%s#\n", err, recString.length(), recString.c_str());
 			break;
 		case 'C':
 		case 'c':
 			FillinSendString(sendString, "/C=12,a=34,v=7892 ", IP_ADDRESS_STR);
-			err = ClientSendRec("192.168.2.69", sendString.c_str(), recString);
+			err = ClientSendRec(IP_ADDRESS_STR, sendString.c_str(), recString);
 			printf("ClientSendRec err:%d rec len:%zd rec str:#%s#\n", err, recString.length(), recString.c_str());
 			break;
 		case 'S':
 		case 's':
 			FillinSendString(sendString, "/S=12,a=34 ", IP_ADDRESS_STR);
-			err = ClientSendRec("192.168.2.69", sendString.c_str(), recString);
+			err = ClientSendRec(IP_ADDRESS_STR, sendString.c_str(), recString);
 			printf("ClientSendRec err:%d rec len:%zd rec str:#%s#\n", err, recString.length(), recString.c_str());
 			break;
 		}

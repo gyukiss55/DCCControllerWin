@@ -11,4 +11,5 @@ void SendURL(
     const char* ipAddress,
     const char* channel,
     const char* dccCommand,
+    std::string& receiveString,
     std::string& feedback);

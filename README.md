@@ -13,4 +13,5 @@ DCC Controller Windows
 10. V1.09.00 DCC commands tested but no ts 
 11. V1.11.00 DCC commands tested and ts 
 12. V1.12.00 DCC commands tested RF24 client send status
+13. V1.13.00 Sensor refreshed
 

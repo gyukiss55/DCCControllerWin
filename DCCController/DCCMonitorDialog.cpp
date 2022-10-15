@@ -212,6 +212,19 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
     case WM_INITDIALOG:
         {
             initSliders(hDlg);
+
+
+            SendDlgItemMessageA(hDlg,
+                IDC_CHECK_SENSOR_1_1,
+                BM_SETCHECK,
+                FALSE,
+                0);
+
+            SendDlgItemMessageA(hDlg,
+                IDC_CHECK_SENSOR_1_2,
+                BM_SETCHECK,
+                FALSE,
+                0);
         }
         return (INT_PTR)TRUE;
     case WM_HSCROLL:
@@ -408,6 +421,213 @@ bool ReadDCCDlgContent(HWND hDlg, std::string& feedback)
     return false;
 }
 
+uint32_t HexaStringConvert(const char* str)
+{
+    uint32_t ret = 0;
+    for (int i = 0; i < strlen(str); ++i) {
+        ret <<=  4;
+        if (str[i] >= '0' && str[i] <= '9')
+            ret += str[i] - '0';
+        else if (str[i] >= 'A' && str[i] <= 'F')
+            ret += str[i] + 10 - 'A';
+        else if (str[i] >= 'a' && str[i] <= 'f')
+            ret += str[i] + 10 - 'a';
+        else
+            break;
+    }
+    return ret;
+}
+
+bool ChangeStatus(HWND hDlg, std::string& strReceive)
+{
+    std::string::size_type pos = 0;
+    for (; pos < strReceive.size(); ) {
+        pos = strReceive.find('>', pos + 1);
+        if (pos < strReceive.size() && (strReceive.substr (pos + 1, 5) == std::string("Node:"))) {
+            std::string node = strReceive.substr(pos + 6, 2);
+            std::string type = strReceive.substr(pos + 14, 1);
+            std::string cross = strReceive.substr(pos + 22, 4);
+            std::string sensor = strReceive.substr(pos + 34, 4);
+            OutputDebugStringA("\nChangeStatus - Node:");
+            OutputDebugStringA(node.c_str ());
+            OutputDebugStringA(" type:");
+            OutputDebugStringA(type.c_str ());
+            OutputDebugStringA(" cross:");
+            OutputDebugStringA(cross.c_str ());
+            OutputDebugStringA(" sensor:");
+            OutputDebugStringA(sensor.c_str ());
+
+            char nodeID[8];
+
+            SendDlgItemMessageA(hDlg,
+                IDC_EDIT_NODEADDRESS5,
+                WM_GETTEXT,
+                (WPARAM)sizeof(nodeID),
+                (LPARAM)nodeID);
+
+ 
+            int nodeFound = -1;
+            if (node == std::string(nodeID)) {
+                nodeFound = 0;
+            }
+            else {
+                SendDlgItemMessageA(hDlg,
+                    IDC_EDIT_NODEADDRESS6,
+                    WM_GETTEXT,
+                    (WPARAM)sizeof(nodeID),
+                    (LPARAM)nodeID);
+                if (node == std::string(nodeID))
+                    nodeFound = 1;
+            }
+
+            if (nodeFound < 0)
+                return false;
+
+            int sensorValue = HexaStringConvert(sensor.c_str());
+
+            if (nodeFound == 0) {
+
+                if (sensorValue & 0x01)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_1_1,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_1_1,
+                        BM_SETCHECK,
+                        TRUE,
+                        0);
+
+                if (sensorValue & 0x02)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_1_2,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_1_2,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+                if (sensorValue & 0x04)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_1_3,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_1_3,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+                if (sensorValue & 0x08)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_1_4,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_1_4,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+                if (sensorValue & 0x10)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_1_5,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_1_5,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+            }
+            else {
+
+                if (sensorValue & 0x01)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_2_1,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_2_1,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+                if (sensorValue & 0x02)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_2_2,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_2_2,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+                if (sensorValue & 0x04)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_2_3,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_2_3,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+                if (sensorValue & 0x08)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_2_4,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_2_4,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+                if (sensorValue & 0x10)
+                    SendDlgItemMessageA(hDlg,
+                        IDC_CHECK_SENSOR_2_5,
+                        BM_SETCHECK,
+                        FALSE,
+                        0);
+
+                else SendDlgItemMessageA(hDlg,
+                    IDC_CHECK_SENSOR_2_5,
+                    BM_SETCHECK,
+                    TRUE,
+                    0);
+
+            }
+
+        }
+    }
+    return true;
+}
+
+
 bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* nodeStr, const uint32_t * rids)
 {
     HWND hCtrl = GetDlgItem(hDlg, rids[0]);
@@ -449,7 +669,11 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
 
     AppendTimeStamp(dccCommand);
 
-    SendURL(ipAddr, nodeStr, dccCommand.c_str (), strDCCFeedback);
+    std::string strReceive;
+
+    SendURL(ipAddr, nodeStr, dccCommand.c_str (), strReceive, strDCCFeedback);
+    ChangeStatus(hDlg, strReceive);
+
     InvalidateRect(hWndMain, NULL, TRUE);
     return true;
 }
@@ -500,7 +724,9 @@ bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos)
 
     AppendTimeStamp(dccCommand);
 
-    SendURL(ipAddr, nodeStr, dccCommand.c_str (), strDCCFeedback);
+    std::string strReceive;
+
+    SendURL(ipAddr, nodeStr, dccCommand.c_str (), strReceive, strDCCFeedback);
     InvalidateRect(hWndMain, NULL, TRUE);
     return true;
 }

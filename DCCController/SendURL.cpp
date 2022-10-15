@@ -25,6 +25,7 @@ void SendURL(
     const char* ipAddress,
     const char* channel,
     const char* dccCommand,
+    std::string& receiveString,
     std::string& feedback)
 {
     strFeedback = "";
@@ -59,6 +60,7 @@ void SendURL(
         OutputDebugStringA("\nRecString:\n");
         OutputDebugStringA(recString.c_str ());
 
+        receiveString = recString;
     }
 
     feedback = strFeedback;

@@ -14,4 +14,6 @@ DCC Controller Windows
 11. V1.11.00 DCC commands tested and ts 
 12. V1.12.00 DCC commands tested RF24 client send status
 13. V1.13.00 Sensor refreshed
+14. V1.14.00 Draw track photo
+15. V1.15.00 Mark Railroad switch
 

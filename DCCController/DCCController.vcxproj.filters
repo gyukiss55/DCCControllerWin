@@ -45,6 +45,9 @@
     <ClInclude Include="RegistryIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RailDevice.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SendURL.cpp">
@@ -66,6 +69,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CustomSliderTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JPEGTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RailDevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,6 +3,7 @@
 
 #include "framework.h"
 #include <windows.h>
+#include <commdlg.h>
 #include <objidl.h>
 #include <gdiplus.h>
 using namespace Gdiplus;
@@ -42,6 +43,8 @@ void OnPaintDrawLine(HDC hdc);
 void OnKeyPress(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void OnKeyUpDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void OnMouseMsg(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+bool LoadPicture(HWND hWnd, std::wstring& filename);
+bool SelectFile(HWND hWnd, std::wstring& filename, bool writeMode);
 
 int mainCreateSliderControl();
 
@@ -189,6 +192,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     ShowWindow(hwndDCCMonitor, SW_SHOW);
                 }
                 //                DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG_TEST), hWnd, DCCControlDlg);
+                break;
+            case ID_FILE_LOADPICTURE:
+                LoadPicture(hWnd, jpgFileName);
+                InvalidateRect(hWnd, NULL, TRUE);
+                break;
+            case ID_FILE_LOADDEVICES:
+                if (SelectFile(hWnd, iniFileName, false)) {
+                    LoadDevices(hWnd, iniFileName);
+                    InvalidateRect(hWnd, NULL, TRUE);
+                }
+                break;
+            case ID_FILE_SAVEDEVICES:
+                if (SelectFile(hWnd, iniFileName, true)) {
+                    SaveDevices(hWnd, iniFileName);
+                    InvalidateRect(hWnd, NULL, TRUE);
+                }
                 break;
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
@@ -379,9 +398,89 @@ void OnPaintDrawLine(HDC hDC)
     PointF      pointF(10.0f, 20.0f);
 //    graphics.DrawString(L"DCC Controller!", -1, &font, pointF, &brush);
 
-    Image image(L"Track4.jpg");
-    graphics.DrawImage(&image, 10, 10);
+    if (jpgFileName.size() > 0) {
+        Image image(jpgFileName.c_str ());
+        graphics.DrawImage(&image, 10, 10);
+
+    }
 
     DrawDevices(hDC);
 
 }
+
+
+bool LoadPicture(HWND hWnd, std::wstring& filename)
+{
+    OPENFILENAME ofn;       // common dialog box structure
+    TCHAR szFile[260] = { 0 };       // if using TCHAR macros
+
+    // Initialize OPENFILENAME
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hWnd;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = _T("All\0*.*\0JPG\0*.jpg\0\0");
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFileTitle = NULL; // L"Read Picture";
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+    if (GetOpenFileName(&ofn) == TRUE)
+    {
+        // use ofn.lpstrFile
+        filename = szFile;
+        return true;
+    }
+    return false;
+}
+
+bool SelectFile(HWND hWnd, std::wstring& filename, bool writeMode)
+{
+    OPENFILENAME ofn;       // common dialog box structure
+    TCHAR szFile[260] = { 0 };       // if using TCHAR macros
+
+    // Initialize OPENFILENAME
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hWnd;
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = _T("All\0*.*\0INI\0*.ini\0\0");
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFileTitle = NULL; // L"Load ini file";
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+    if (writeMode) {
+        ofn.Flags = OFN_PATHMUSTEXIST;
+        ofn.lpstrFileTitle = NULL; // L"Save ini file";
+    }
+    else {
+
+    }
+    if (writeMode) {
+        if (GetSaveFileName(&ofn) == TRUE)
+        {
+            // use ofn.lpstrFile
+            filename = szFile;
+            return true;
+        }
+    }
+    else {
+        if (GetOpenFileName(&ofn) == TRUE)
+        {
+            // use ofn.lpstrFile
+            filename = szFile;
+            return true;
+        }
+
+    }
+
+    return false;
+
+}
+
+

@@ -12,7 +12,7 @@ FileInput::FileInput()
 }
 bool FileInput::Open(const wchar_t* fn)
 {
-	HANDLE  hFile = CreateFile((wchar_t*)fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	hFile = CreateFile((wchar_t*)fn, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 		return false;
 	return true;
@@ -38,7 +38,7 @@ FileOutput::FileOutput()
 
 bool FileOutput::Open(const wchar_t* fn)
 {
-	HANDLE  hFile = CreateFile((wchar_t*) fn, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+	hFile = CreateFile((wchar_t*) fn, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile == INVALID_HANDLE_VALUE)
 		return false;
 	return true;

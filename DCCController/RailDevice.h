@@ -21,7 +21,7 @@ struct BasicDevice {
 	virtual void Draw(HDC hDC) = 0;
 	virtual INT32 GetSizeOfDevice(RECT& rect);
 	virtual bool Save(FileOutput& file);
-	virtual bool Read(FileInput& file);
+	virtual bool Load(FileInput& file);
 };
 
 
@@ -34,7 +34,7 @@ struct SwitchDevice : public BasicDevice {
 	void Draw(HDC hDC);
 //	INT32 GetSizeOfDevice(RECT & rect);
 	bool Save(FileOutput& file);
-	bool Read(FileInput& file);
+	bool Load(FileInput& file);
 };
 
 struct SensorDevice : public BasicDevice {
@@ -59,6 +59,7 @@ extern std::wstring jpgFileName;
 void InitDevices();
 void InputDevices(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 void DrawDevices(HDC hDC);
-bool SaveDevices();
+bool SaveDevices(HWND hWnd, const std::wstring& fileName);
+bool LoadDevices(HWND hWnd, const std::wstring& fileName);
 
 #pragma once

@@ -43,15 +43,15 @@ void InputDevices(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		generalInputState = 0;
 		inputState = 0;
 		return;
-	} else if (inputState == 0 && message == WM_CHAR && (wParam == 'C' || wParam == 'c')) {
-		generalInputState = 'C';
+	} else if (inputState == 0 && message == WM_CHAR && (wParam == 'W' || wParam == 'w')) {
+		generalInputState = 'W';
 		++inputState;
 		memset(&inputSwitchDevice, 0, sizeof(inputSwitchDevice));
 	} else if (inputState == 0 && message == WM_CHAR && (wParam == 'S' || wParam == 's')) {
 		generalInputState = 'S';
 		++inputState;
-		memset(&inputSwitchDevice, 0, sizeof(inputSwitchDevice));
-	} else if (inputState == 'C') {
+		memset(&inputSensorDevice, 0, sizeof(inputSensorDevice));
+	} else if (generalInputState == 'W') {
 		if (message == WM_CHAR) {
 			if (wParam >= '0' && wParam <= '9') {
 				++inputState;
@@ -92,7 +92,7 @@ void InputDevices(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				InvalidateRect(hWnd, &rect, TRUE);
 			}
 		}
-	} else if (inputState == 'S') {
+	} else if (generalInputState == 'S') {
 		 if (message == WM_CHAR) {
 			 if (wParam >= '0' && wParam <= '9') {
 				 ++inputState;
@@ -242,8 +242,21 @@ bool BasicDevice::Save(FileOutput& file)
 	return true;
 }
 
-bool BasicDevice::Read(FileInput& file)
+bool BasicDevice::Load(FileInput& file)
 {
+	char buffer[4];
+	file.Read(buffer, 4);
+	if (memcmp(buffer, TEXT("DE"), 4) != 0)
+		return false;
+	file.Read(&nodeID, sizeof(nodeID));
+	file.Read(&deviceID, sizeof(deviceID));
+	file.Read(&state, sizeof(state));
+	file.Read(&xBegin, sizeof(xBegin));
+	file.Read(&yBegin, sizeof(yBegin));
+	file.Read(&xEnd, sizeof(xEnd));
+	file.Read(&yEnd, sizeof(yEnd));
+	file.Read(&xText, sizeof(xText));
+	file.Read(&yText, sizeof(yText));
 	return true;
 }
 
@@ -256,8 +269,16 @@ bool SwitchDevice::Save(FileOutput& file)
 	return true;
 }
 
-bool SwitchDevice::Read(FileInput& file)
+bool SwitchDevice::Load(FileInput& file)
 {
+	char buffer[4];
+	if (!BasicDevice::Load(file))
+		return false;
+	file.Read(buffer, 4);
+	if (memcmp(buffer, TEXT("SW"), 4) != 0)
+		return false;
+	file.Read(&xSide, sizeof(xSide));
+	file.Read(&ySide, sizeof(ySide));
 	return true;
 }
 
@@ -272,7 +293,7 @@ void DrawDevices(HDC hDC)
 
 }
 
-bool SaveDevices()
+bool SaveDevices(HWND hWnd, const std::wstring& fileName)
 {
 	if (iniFileName.length() == 0)
 		iniFileName = INIFILENAME0;
@@ -280,9 +301,10 @@ bool SaveDevices()
 		jpgFileName = JPGFILENAME0;
 
 	FileOutput file;
-	if (file.Open(jpgFileName.data ())) {
-		file.Write(INIFILEVERSION, 6);
+	if (file.Open(fileName.c_str ())) {
+		file.Write(INIFILEVERSION, 12);
 		DWORD len = jpgFileName.size() + 1;
+		len *= 2;
 		file.Write(&len, sizeof (len));
 		file.Write(jpgFileName.c_str (), len);
 		file.Write(TEXT("SW"), 4);
@@ -305,10 +327,80 @@ bool SaveDevices()
 
 }
 
-bool ReadDevices()
+bool LoadDevices(HWND hWnd, const std::wstring& fileName)
 {
-	return true;
+	FileInput file;
+	char buffer[512];
+	DWORD len;
+	std::wstring jpgFileTmp;
 
+	SwitchDevice switchDevicesIn[MAXSWITCHDEVICES];
+	SensorDevice sensorDevicesIn[MAXSENSORDEVICES];
+	if (file.Open(fileName.c_str())) {
+
+		bool breakFlag = false;
+		for (int t = 0; t < 1; ++t) {
+//			file.Read(INIFILEVERSION, 12);
+			file.Read(buffer, 12);
+			if (memcmp(buffer, INIFILEVERSION, 12) != 0)
+				break;
+//			file.Write(&len, sizeof(len));
+			file.Read(&len, sizeof(len));
+			if (len > 5 && len < 512) {
+				//file.Write(fileName.c_str(), len);
+				file.Read(buffer, len);
+			}
+			else
+				break;
+			jpgFileTmp = (wchar_t *)buffer;
+			
+			//file.Write(TEXT("SW"), 4);
+			file.Read(buffer, 4);
+			if (memcmp(buffer, L"SW", 4) != 0)
+				break;
+
+			//len = MAXSWITCHDEVICES;
+			//file.Write(&len, sizeof(len));
+			file.Read(&len, sizeof(len));
+			if (len != MAXSWITCHDEVICES)
+				break;
+			for (int i = 0; i < MAXSWITCHDEVICES; ++i) {
+				if (!switchDevicesIn[i].Load(file)) {
+					breakFlag = true;
+					break;
+				}
+			}
+			if (breakFlag)
+				break;
+			//file.Write(TEXT("SE"), 4);
+			file.Read(buffer, 4);
+			if (memcmp(buffer, L"SE", 4) != 0)
+				break;
+			//len = MAXSENSORDEVICES;
+			//file.Write(&len, sizeof(len));
+			file.Read(&len, sizeof(len));
+			if (len != MAXSENSORDEVICES)
+				break;
+			for (int i = 0; i < MAXSENSORDEVICES; ++i) {
+				if (!sensorDevicesIn[i].Load(file)) {
+					breakFlag = true;
+					break;
+				}
+			}
+
+			if (breakFlag)
+				break;
+			file.Close();
+			jpgFileName = jpgFileTmp;
+			for (int i = 0; i < MAXSENSORDEVICES; ++i)
+				switchDevices[i] = switchDevicesIn[i];
+			for (int i = 0; i < MAXSENSORDEVICES; ++i)
+				sensorDevices[i] = sensorDevicesIn[i];
+
+			return true;
+		}
+
+	}
+	return false;
 }
-
 

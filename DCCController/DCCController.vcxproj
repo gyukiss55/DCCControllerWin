@@ -143,6 +143,7 @@
     <ClInclude Include="DCCController.h" />
     <ClInclude Include="DCCMonitorDialog.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="FileIO.h" />
     <ClInclude Include="RailDevice.h" />
     <ClInclude Include="RegistryIO.h" />
     <ClInclude Include="SliderControl.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="CustomSliderTest.cpp" />
     <ClCompile Include="DCCController.cpp" />
     <ClCompile Include="DCCMonitorDialog.cpp" />
+    <ClCompile Include="FIleIO.cpp" />
     <ClCompile Include="JPEGTest.cpp" />
     <ClCompile Include="RailDevice.cpp" />
     <ClCompile Include="RegistryIO.cpp" />

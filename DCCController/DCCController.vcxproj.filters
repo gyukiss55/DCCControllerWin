@@ -48,6 +48,9 @@
     <ClInclude Include="RailDevice.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="FileIO.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SendURL.cpp">
@@ -75,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RailDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FIleIO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

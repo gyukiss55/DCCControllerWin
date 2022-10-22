@@ -56,7 +56,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: Place code here.
-    InitCrossingDevices();
+    InitDevices();
 
     // Initialize GDI+.
 
@@ -304,7 +304,7 @@ void RefreshStatus(HWND hWnd)
 
 void OnKeyPress(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    InputCrossingDevices(hWnd, message, wParam, lParam);
+    InputDevices(hWnd, message, wParam, lParam);
 }
 
 
@@ -319,7 +319,7 @@ void OnMouseMsg(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_RBUTTONUP:
     case WM_MOUSEMOVE:
         {
-            InputCrossingDevices(hWnd, message, wParam, lParam);
+            InputDevices(hWnd, message, wParam, lParam);
             WPARAM xPos = LOWORD(lParam);
             WPARAM yPos = HIWORD(lParam);
         }
@@ -338,7 +338,7 @@ void OnMouseMsg(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void OnKeyUpDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 
-    InputCrossingDevices(hWnd, message, wParam, lParam);
+    InputDevices(hWnd, message, wParam, lParam);
 
     WORD vkCode = LOWORD(wParam);                                 // virtual-key code
 
@@ -382,6 +382,6 @@ void OnPaintDrawLine(HDC hDC)
     Image image(L"Track4.jpg");
     graphics.DrawImage(&image, 10, 10);
 
-    DrawCrossingDevice(hDC);
+    DrawDevices(hDC);
 
 }

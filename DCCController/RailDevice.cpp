@@ -12,84 +12,128 @@
 using namespace Gdiplus;
 
 #include "RailDevice.h"
+#include "FileIO.h"
 
-CrossingDevice crossingDevices[MAXCROSSINGDEVICES];
+SwitchDevice switchDevices[MAXSWITCHDEVICES];
+SensorDevice sensorDevices[MAXSENSORDEVICES];
+
+std::wstring iniFileName;
+std::wstring jpgFileName;
+
 
 INT32 generalInputState = 0;
-INT32 crossingInputState = 0;
+INT32 inputState = 0;
 
-CrossingDevice inputCrossingDevice;
+SwitchDevice inputSwitchDevice;
+SensorDevice inputSensorDevice;
 
-void InitCrossingDevices()
+void InitDevices()
 {
-	for (int i = 0; i < MAXCROSSINGDEVICES; ++i) {
-		memset(crossingDevices, 0, sizeof(crossingDevices));
+	for (int i = 0; i < MAXSWITCHDEVICES; ++i) {
+		switchDevices[i] = SwitchDevice();
+	}
+	for (int i = 0; i < MAXSENSORDEVICES; ++i) {
+		sensorDevices[i] = SensorDevice();
 	}
 }
 
-void InputCrossingDevices(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+void InputDevices(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (message == WM_KEYDOWN && wParam == VK_ESCAPE) {
 		generalInputState = 0;
-		crossingInputState = 0;
+		inputState = 0;
 		return;
-	} else if (crossingInputState == 0 && message == WM_CHAR && (wParam == 'C' || wParam == 'c')) {
-		generalInputState = 1;
-		++crossingInputState;
-		memset(&inputCrossingDevice, 0, sizeof(inputCrossingDevice));
-	} else if (crossingInputState == 1 && message == WM_CHAR) {
-		if (wParam >= '0' && wParam <= '9') {
-			++crossingInputState;
-			inputCrossingDevice.deviceID = wParam - '0';
-		}
-		else if (wParam >= 'A' && wParam <= 'F') {
-			++crossingInputState;
-			inputCrossingDevice.deviceID = wParam - 'A' + 10;
-		}
-		else if (wParam >= 'a' && wParam <= 'f') {
-			++crossingInputState;
-			inputCrossingDevice.deviceID = wParam - 'a' + 10;
-		}
-	} else if (crossingInputState == 2 && message == WM_LBUTTONDOWN) {
-		++crossingInputState;
-		WPARAM xPos = LOWORD(lParam);
-		WPARAM yPos = HIWORD(lParam);
-		inputCrossingDevice.xBegin = xPos;
-		inputCrossingDevice.yBegin = yPos;
-	} else if (crossingInputState == 3 && message == WM_LBUTTONUP) {
-		++crossingInputState;
-		WPARAM xPos = LOWORD(lParam);
-		WPARAM yPos = HIWORD(lParam);
-		inputCrossingDevice.xEnd = xPos;
-		inputCrossingDevice.yEnd = yPos;
-	} else if (crossingInputState == 4 && message == WM_LBUTTONDOWN) {
-		++crossingInputState;
-		WPARAM xPos = LOWORD(lParam);
-		WPARAM yPos = HIWORD(lParam);
-		inputCrossingDevice.xSide = xPos;
-		inputCrossingDevice.ySide = yPos;
+	} else if (inputState == 0 && message == WM_CHAR && (wParam == 'C' || wParam == 'c')) {
+		generalInputState = 'C';
+		++inputState;
+		memset(&inputSwitchDevice, 0, sizeof(inputSwitchDevice));
+	} else if (inputState == 0 && message == WM_CHAR && (wParam == 'S' || wParam == 's')) {
+		generalInputState = 'S';
+		++inputState;
+		memset(&inputSwitchDevice, 0, sizeof(inputSwitchDevice));
+	} else if (inputState == 'C') {
+		if (message == WM_CHAR) {
+			if (wParam >= '0' && wParam <= '9') {
+				++inputState;
+				inputSwitchDevice.deviceID = (INT32)wParam - '0';
+			}
+			else if (wParam >= 'A' && wParam <= 'F') {
+				++inputState;
+				inputSwitchDevice.deviceID = (INT32)wParam - 'A' + 10;
+			}
+			else if (wParam >= 'a' && wParam <= 'f') {
+				++inputState;
+				inputSwitchDevice.deviceID = (INT32)wParam - 'a' + 10;
+			}
+		} else if (inputState == 2 && message == WM_LBUTTONDOWN) {
+			++inputState;
+			inputSwitchDevice.xBegin = (INT32)LOWORD(lParam);
+			inputSwitchDevice.yBegin = (INT32)HIWORD(lParam);
+		} else if (inputState == 3 && message == WM_LBUTTONUP) {
+			++inputState;
+			inputSwitchDevice.xEnd = (INT32)LOWORD(lParam);
+			inputSwitchDevice.yEnd = (INT32)HIWORD(lParam);
+		} else if (inputState == 4 && message == WM_LBUTTONDOWN) {
+			++inputState;
+			inputSwitchDevice.xSide = (INT32)LOWORD(lParam);
+			inputSwitchDevice.ySide = (INT32)HIWORD(lParam);
 		
-	} else if (crossingInputState == 5 && message == WM_LBUTTONDOWN) {
-		crossingInputState = 0;
-		generalInputState = 0;
-		WPARAM xPos = LOWORD(lParam);
-		WPARAM yPos = HIWORD(lParam);
-		inputCrossingDevice.xText = xPos;
-		inputCrossingDevice.yText = yPos;
-		
-		if (inputCrossingDevice.deviceID < MAXCROSSINGDEVICES) {
-			RECT rect;
-			inputCrossingDevice.GetSizeOfDevice(rect);
-			crossingDevices[inputCrossingDevice.deviceID] = inputCrossingDevice;
-			InvalidateRect(hWnd, &rect, TRUE);
 		}
+		else if (inputState == 5 && message == WM_LBUTTONDOWN) {
+			inputState = 0;
+			generalInputState = 0;
+			inputSwitchDevice.xText = (INT32)LOWORD(lParam);
+			inputSwitchDevice.yText = (INT32)HIWORD(lParam);
 
+			if (inputSwitchDevice.deviceID < MAXSWITCHDEVICES) {
+				RECT rect;
+				inputSwitchDevice.GetSizeOfDevice(rect);
+				switchDevices[inputSwitchDevice.deviceID] = inputSwitchDevice;
+				InvalidateRect(hWnd, &rect, TRUE);
+			}
+		}
+	} else if (inputState == 'S') {
+		 if (message == WM_CHAR) {
+			 if (wParam >= '0' && wParam <= '9') {
+				 ++inputState;
+				 inputSensorDevice.deviceID = (INT32)wParam - '0';
+			 }
+			 else if (wParam >= 'A' && wParam <= 'F') {
+				 ++inputState;
+				 inputSensorDevice.deviceID = (INT32)wParam - 'A' + 10;
+			 }
+			 else if (wParam >= 'a' && wParam <= 'f') {
+				 ++inputState;
+				 inputSensorDevice.deviceID = (INT32)wParam - 'a' + 10;
+			 }
+		 }
+		 else if (inputState == 2 && message == WM_LBUTTONDOWN) {
+			 ++inputState;
+			 inputSensorDevice.xBegin = (INT32)LOWORD(lParam);
+			 inputSensorDevice.yBegin = (INT32)HIWORD(lParam);
+		 }
+		 else if (inputState == 3 && message == WM_LBUTTONUP) {
+			 ++inputState;
+			 inputSensorDevice.xEnd = (INT32)LOWORD(lParam);
+			 inputSensorDevice.yEnd = (INT32)HIWORD(lParam);
+		 }
+		 else if (inputState == 4 && message == WM_LBUTTONDOWN) {
+			 inputState = 0;
+			 generalInputState = 0;
+			 inputSensorDevice.xText = (INT32)LOWORD(lParam);
+			 inputSensorDevice.yText = (INT32)HIWORD(lParam);
+
+			 if (inputSensorDevice.deviceID < MAXSENSORDEVICES) {
+				 RECT rect;
+				 inputSensorDevice.GetSizeOfDevice(rect);
+				 sensorDevices[inputSensorDevice.deviceID] = inputSensorDevice;
+				 InvalidateRect(hWnd, &rect, TRUE);
+			 }
+		 }
 	}
-
-
 }
 
-CrossingDevice::CrossingDevice() :
+BasicDevice::BasicDevice() :
 			nodeID (0),
 			deviceID(0),
 			state(0),
@@ -97,15 +141,26 @@ CrossingDevice::CrossingDevice() :
 			yBegin(0),
 			xEnd(0),
 			yEnd(0),
-			xSide(0),
-			ySide(0),
 			xText(0),
 			yText(0)
 {
 
 }
 
-INT32 CrossingDevice::GetSizeOfDevice(RECT& rect)
+SwitchDevice::SwitchDevice() :
+			xSide(0),
+			ySide(0)
+{
+
+}
+
+
+SensorDevice::SensorDevice()
+{
+
+}
+
+INT32 BasicDevice::GetSizeOfDevice(RECT& rect)
 {
 	INT32 s1 = (xBegin > xEnd) ? (xBegin - xEnd) : (xEnd - xBegin);
 	INT32 s2 = (yBegin > yEnd) ? (yBegin - yEnd) : (yEnd - yBegin);
@@ -123,7 +178,7 @@ INT32 CrossingDevice::GetSizeOfDevice(RECT& rect)
 }
 
 
-void CrossingDevice::Draw(HDC hDC)
+void SwitchDevice::Draw(HDC hDC)
 {
 	if ((xBegin == xEnd) || (yBegin == yEnd))
 		return;
@@ -139,22 +194,121 @@ void CrossingDevice::Draw(HDC hDC)
 	SolidBrush  brush(Color(255, 0, 0, 255));
 	FontFamily  fontFamily(L"Times New Roman");
 	Font        font(&fontFamily, 24, FontStyleRegular, UnitPixel);
-//	PointF      pointF((xBegin + xEnd)/2, (yBegin + yEnd) / 2 + 20.0f);
-	PointF      pointF(xText, yText);
+	PointF      pointF((Gdiplus::REAL)xText, (Gdiplus::REAL)yText);
 	const wchar_t * leftOrRight = L"Left";
 	if (this->state == 1)
 		leftOrRight = L"Right";
-	wchar_t strCross[30];
-	wsprintf(strCross, L"Cross %d %s", this->deviceID, leftOrRight);
-	graphics.DrawString(strCross, -1, &font, pointF, &brush);
+	wchar_t strSwitch[30];
+	wsprintf(strSwitch, L"Switch %d %s", this->deviceID, leftOrRight);
+	graphics.DrawString(strSwitch, -1, &font, pointF, &brush);
 
 }
 
-void DrawCrossingDevice(HDC hDC)
+void SensorDevice::Draw(HDC hDC)
 {
-	for (int i = 0; i < MAXCROSSINGDEVICES; ++i) {
-		crossingDevices[i].Draw(hDC);
+	if ((xBegin == xEnd) || (yBegin == yEnd))
+		return;
+	Graphics graphics(hDC);
+	Pen      pen1(Color(255, 255, 0, 255));
+	pen1.SetWidth(10.);
+	graphics.DrawLine(&pen1, xBegin, yBegin, xEnd, yEnd);
+
+
+	SolidBrush  brush(Color(255, 0, 0, 255));
+	FontFamily  fontFamily(L"Times New Roman");
+	Font        font(&fontFamily, 24, FontStyleRegular, UnitPixel);
+	PointF      pointF((Gdiplus::REAL)xText, (Gdiplus::REAL)yText);
+	const wchar_t* onOrOff = L"On";
+	if (this->state == 1)
+		onOrOff = L"Off";
+	wchar_t strSensor[30];
+	wsprintf(strSensor, L"Sensor %d %s", this->deviceID, onOrOff);
+	graphics.DrawString(strSensor, -1, &font, pointF, &brush);
+
+}
+
+bool BasicDevice::Save(FileOutput& file)
+{
+	file.Write(TEXT("DE"), 4);
+	file.Write(&nodeID, sizeof(nodeID));
+	file.Write(&deviceID, sizeof(deviceID));
+	file.Write(&state, sizeof(state));
+	file.Write(&xBegin, sizeof(xBegin));
+	file.Write(&yBegin, sizeof(yBegin));
+	file.Write(&xEnd, sizeof(xEnd));
+	file.Write(&yEnd, sizeof(yEnd));
+	file.Write(&xText, sizeof(xText));
+	file.Write(&yText, sizeof(yText));
+	return true;
+}
+
+bool BasicDevice::Read(FileInput& file)
+{
+	return true;
+}
+
+bool SwitchDevice::Save(FileOutput& file)
+{
+	BasicDevice::Save(file);
+	file.Write(TEXT("SW"), 4);
+	file.Write(&xSide, sizeof(xSide));
+	file.Write(&ySide, sizeof(ySide));
+	return true;
+}
+
+bool SwitchDevice::Read(FileInput& file)
+{
+	return true;
+}
+
+void DrawDevices(HDC hDC)
+{
+	for (int i = 0; i < MAXSWITCHDEVICES; ++i) {
+		switchDevices[i].Draw(hDC);
+	}
+	for (int i = 0; i < MAXSENSORDEVICES; ++i) {
+		sensorDevices[i].Draw(hDC);
 	}
 
 }
+
+bool SaveDevices()
+{
+	if (iniFileName.length() == 0)
+		iniFileName = INIFILENAME0;
+	if (jpgFileName.length() == 0)
+		jpgFileName = JPGFILENAME0;
+
+	FileOutput file;
+	if (file.Open(jpgFileName.data ())) {
+		file.Write(INIFILEVERSION, 6);
+		DWORD len = jpgFileName.size() + 1;
+		file.Write(&len, sizeof (len));
+		file.Write(jpgFileName.c_str (), len);
+		file.Write(TEXT("SW"), 4);
+		len = MAXSWITCHDEVICES;
+		file.Write(&len, sizeof(len));
+		for (int i = 0; i < MAXSWITCHDEVICES; ++i) {
+			switchDevices[i].Save(file);
+		}
+		file.Write(TEXT("SE"), 4);
+		len = MAXSENSORDEVICES;
+		file.Write(&len, sizeof(len));
+		for (int i = 0; i < MAXSENSORDEVICES; ++i) {
+			sensorDevices[i].Save(file);
+		}
+		file.Close();
+		return true;
+
+	}
+	return false;
+
+}
+
+bool ReadDevices()
+{
+	return true;
+
+}
+
 

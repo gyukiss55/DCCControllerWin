@@ -107,29 +107,29 @@ const uint32_t rids4[] = {
 };
 
 const uint32_t rids5[] = {
-    IDC_RADIO_CROSSLEFT_1_1,
-    IDC_RADIO_CROSSRIGHT_1_1,
-    IDC_RADIO_CROSSLEFT_1_2,
-    IDC_RADIO_CROSSRIGHT_1_2,
-    IDC_RADIO_CROSSLEFT_1_3,
-    IDC_RADIO_CROSSRIGHT_1_3,
-    IDC_RADIO_CROSSLEFT_1_4,
-    IDC_RADIO_CROSSRIGHT_1_4,
-    IDC_RADIO_CROSSLEFT_1_5,
-    IDC_RADIO_CROSSRIGHT_1_5
+    IDC_RADIO_SWITCHLEFT_1_1,
+    IDC_RADIO_SWITCHRIGHT_1_1,
+    IDC_RADIO_SWITCHLEFT_1_2,
+    IDC_RADIO_SWITCHRIGHT_1_2,
+    IDC_RADIO_SWITCHLEFT_1_3,
+    IDC_RADIO_SWITCHRIGHT_1_3,
+    IDC_RADIO_SWITCHLEFT_1_4,
+    IDC_RADIO_SWITCHRIGHT_1_4,
+    IDC_RADIO_SWITCHLEFT_1_5,
+    IDC_RADIO_SWITCHRIGHT_1_5
 };
 
 const uint32_t rids6[] = {
-    IDC_RADIO_CROSSLEFT_2_1,
-    IDC_RADIO_CROSSRIGHT_2_1,
-    IDC_RADIO_CROSSLEFT_2_2,
-    IDC_RADIO_CROSSRIGHT_2_2,
-    IDC_RADIO_CROSSLEFT_2_3,
-    IDC_RADIO_CROSSRIGHT_2_3,
-    IDC_RADIO_CROSSLEFT_2_4,
-    IDC_RADIO_CROSSRIGHT_2_4,
-    IDC_RADIO_CROSSLEFT_2_5,
-    IDC_RADIO_CROSSRIGHT_2_5
+    IDC_RADIO_SWITCHLEFT_2_1,
+    IDC_RADIO_SWITCHRIGHT_2_1,
+    IDC_RADIO_SWITCHLEFT_2_2,
+    IDC_RADIO_SWITCHRIGHT_2_2,
+    IDC_RADIO_SWITCHLEFT_2_3,
+    IDC_RADIO_SWITCHRIGHT_2_3,
+    IDC_RADIO_SWITCHLEFT_2_4,
+    IDC_RADIO_SWITCHRIGHT_2_4,
+    IDC_RADIO_SWITCHLEFT_2_5,
+    IDC_RADIO_SWITCHRIGHT_2_5
 };
 
 static uint32_t idcEditNodes[] = { 
@@ -310,29 +310,29 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS4, rids4, hScrb3, "3");
                 break;
 
-            case IDC_RADIO_CROSSLEFT_1_1:
-            case IDC_RADIO_CROSSRIGHT_1_1:
-            case IDC_RADIO_CROSSLEFT_1_2:
-            case IDC_RADIO_CROSSRIGHT_1_2:
-            case IDC_RADIO_CROSSLEFT_1_3:
-            case IDC_RADIO_CROSSRIGHT_1_3:
-            case IDC_RADIO_CROSSLEFT_1_4:
-            case IDC_RADIO_CROSSRIGHT_1_4:
-            case IDC_RADIO_CROSSLEFT_1_5:
-            case IDC_RADIO_CROSSRIGHT_1_5:
+            case IDC_RADIO_SWITCHLEFT_1_1:
+            case IDC_RADIO_SWITCHRIGHT_1_1:
+            case IDC_RADIO_SWITCHLEFT_1_2:
+            case IDC_RADIO_SWITCHRIGHT_1_2:
+            case IDC_RADIO_SWITCHLEFT_1_3:
+            case IDC_RADIO_SWITCHRIGHT_1_3:
+            case IDC_RADIO_SWITCHLEFT_1_4:
+            case IDC_RADIO_SWITCHRIGHT_1_4:
+            case IDC_RADIO_SWITCHLEFT_1_5:
+            case IDC_RADIO_SWITCHRIGHT_1_5:
                 executeRadioButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS5, rids5, "4");
                 break;
 
-            case IDC_RADIO_CROSSLEFT_2_1:
-            case IDC_RADIO_CROSSRIGHT_2_1:
-            case IDC_RADIO_CROSSLEFT_2_2:
-            case IDC_RADIO_CROSSRIGHT_2_2:
-            case IDC_RADIO_CROSSLEFT_2_3:
-            case IDC_RADIO_CROSSRIGHT_2_3:
-            case IDC_RADIO_CROSSLEFT_2_4:
-            case IDC_RADIO_CROSSRIGHT_2_4:
-            case IDC_RADIO_CROSSLEFT_2_5:
-            case IDC_RADIO_CROSSRIGHT_2_5:
+            case IDC_RADIO_SWITCHLEFT_2_1:
+            case IDC_RADIO_SWITCHRIGHT_2_1:
+            case IDC_RADIO_SWITCHLEFT_2_2:
+            case IDC_RADIO_SWITCHRIGHT_2_2:
+            case IDC_RADIO_SWITCHLEFT_2_3:
+            case IDC_RADIO_SWITCHRIGHT_2_3:
+            case IDC_RADIO_SWITCHLEFT_2_4:
+            case IDC_RADIO_SWITCHRIGHT_2_4:
+            case IDC_RADIO_SWITCHLEFT_2_5:
+            case IDC_RADIO_SWITCHRIGHT_2_5:
                 executeRadioButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS6, rids6, "5");
                 break;
 

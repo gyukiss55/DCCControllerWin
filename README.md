@@ -17,3 +17,4 @@ DCC Controller Windows
 14. V1.14.00 Draw track photo
 15. V1.15.00 Mark Railroad switch
 16. V1.16.00 Save and Load
+17. V1.17.00 device rect size

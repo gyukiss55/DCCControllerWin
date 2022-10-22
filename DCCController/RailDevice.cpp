@@ -166,11 +166,21 @@ INT32 BasicDevice::GetSizeOfDevice(RECT& rect)
 	INT32 s2 = (yBegin > yEnd) ? (yBegin - yEnd) : (yEnd - yBegin);
 	s1 = (s1 > s2) ? s1 : s2;
 
+	RECT rect1;
 	if (s1 > MINLENGTH) {
-		rect.left = (xBegin + xEnd) / 2 - s1;
-		rect.right = (xBegin + xEnd) / 2 + s1;
-		rect.top = (yBegin + yEnd) / 2 - s1;
-		rect.bottom = (yBegin + yEnd) / 2 + s1;
+		rect1.left = (xBegin + xEnd) / 2 - s1;
+		rect1.right = (xBegin + xEnd) / 2 + s1;
+		rect1.top = (yBegin + yEnd) / 2 - s1;
+		rect1.bottom = (yBegin + yEnd) / 2 + s1;
+		RECT rect2;
+		rect2.left = xText;
+		rect2.top = yText - 2;
+		rect2.bottom = yText + 26;
+		rect2.right = xText + 12 * 16;
+		rect.left = (rect1.left < rect2.left) ? rect1.left : rect2.left;
+		rect.right = (rect1.right > rect2.right) ? rect1.right : rect2.right;
+		rect.top = (rect1.top < rect2.top) ? rect1.top : rect2.top;
+		rect.bottom = (rect1.bottom > rect2.bottom) ? rect1.bottom : rect2.bottom;
 		return 2 * s1;
 
 	}
@@ -303,7 +313,7 @@ bool SaveDevices(HWND hWnd, const std::wstring& fileName)
 	FileOutput file;
 	if (file.Open(fileName.c_str ())) {
 		file.Write(INIFILEVERSION, 12);
-		DWORD len = jpgFileName.size() + 1;
+		DWORD len = (DWORD)jpgFileName.size() + 1;
 		len *= 2;
 		file.Write(&len, sizeof (len));
 		file.Write(jpgFileName.c_str (), len);

@@ -18,3 +18,4 @@ DCC Controller Windows
 15. V1.15.00 Mark Railroad switch
 16. V1.16.00 Save and Load
 17. V1.17.00 device rect size
+18. V1.17.00 some fixes: channel, function, speed, explicit command

@@ -22,6 +22,7 @@
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "80"
+//#define DEFAULT_PORT "1051"
 
 int32_t __cdecl ClientSendRec(const char* serverName, const char* sendText, std::string& receiveText)
 {
@@ -115,6 +116,7 @@ int32_t __cdecl ClientSendRec(const char* serverName, const char* sendText, std:
             printf("Bytes received: %d\n", iResult);
             recvbuf[iResult] = 0;
             printf("Received: %s\n", recvbuf);
+            OutputDebugStringA(recvbuf);
             receiveText = recvbuf;
         }
         else if (iResult == 0)

@@ -21,8 +21,8 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrID, const char* n
 bool AppendTimeStamp(std::string& dccCommand);
 
 const char* dccCommandsPushButton[] = {
-    "6F",   // forward full speed
-    "4F",   // backward full speed
+    "7F",   // forward full speed
+    "5F",   // backward full speed
     "60",   // stop
 
     "81",   // mp3 1. rec
@@ -49,8 +49,20 @@ const char* dccCommandsRadioButton[] = {
     nullptr
 };
 
+#define CHANNEL_INDEX               0
+#define SPEED_DIRECT_FIRST_INDEX    1
+#define SPEED_DIRECT_LAST_INDEX     3
+#define FUNC_FIRST_INDEX            4
+#define FUNC_LAST_INDEX             8
+#define SPEED_DEC_INDEX             9
+#define SPEED_INC_INDEX             10
+#define EXPL_COMM_INDEX             11
+#define EXPL_EDIT_INDEX             12
+
 
 const uint32_t rids1[] = {
+    0,
+
     IDC_BUTTON_SF1,
     IDC_BUTTON_SB1,
     IDC_BUTTON_SS1,
@@ -61,10 +73,18 @@ const uint32_t rids1[] = {
     IDC_BUTTON_MP14,
     IDC_BUTTON_MP15,
 
+    IDC_BUTTON_MINUS1,
+    IDC_BUTTON_PLUS1,
+
+    IDC_BUTTON_COMEXEC1,
+    IDC_EDIT_COMMAND1,
+
     0
 };
 
 const uint32_t rids2[] = {
+    1, 
+
     IDC_BUTTON_SF2,
     IDC_BUTTON_SB2,
     IDC_BUTTON_SS2,
@@ -75,11 +95,19 @@ const uint32_t rids2[] = {
     IDC_BUTTON_MP24,
     IDC_BUTTON_MP25,
 
+    IDC_BUTTON_MINUS2,
+    IDC_BUTTON_PLUS2,
+
+    IDC_BUTTON_COMEXEC2,
+    IDC_EDIT_COMMAND2,
+
     0
 };
 
 
 const uint32_t rids3[] = {
+    2,
+
     IDC_BUTTON_SF3,
     IDC_BUTTON_SB3,
     IDC_BUTTON_SS3,
@@ -90,9 +118,17 @@ const uint32_t rids3[] = {
     IDC_BUTTON_MP34,
     IDC_BUTTON_MP35,
 
+    IDC_BUTTON_MINUS3,
+    IDC_BUTTON_PLUS3,
+
+    IDC_BUTTON_COMEXEC3,
+    IDC_EDIT_COMMAND3,
+
     0
 };
 const uint32_t rids4[] = {
+    3,
+
     IDC_BUTTON_SF4,
     IDC_BUTTON_SB4,
     IDC_BUTTON_SS4,
@@ -102,6 +138,12 @@ const uint32_t rids4[] = {
     IDC_BUTTON_MP43,
     IDC_BUTTON_MP44,
     IDC_BUTTON_MP45,
+
+    IDC_BUTTON_MINUS4,
+    IDC_BUTTON_PLUS4,
+
+    IDC_BUTTON_COMEXEC4,
+    IDC_EDIT_COMMAND4,
 
     0
 };
@@ -153,6 +195,9 @@ HWND hScrb1 = 0;
 HWND hScrb2 = 0;
 HWND hScrb3 = 0;
 
+int actualSpeed[4] = { 0, 0, 0, 0 };
+int actualFunction[4] = { 0, 0, 0, 0 };
+
 bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos);
 bool InitSliders(HWND hDlg);
 
@@ -189,14 +234,23 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 
     auto executePushButtonCommand([](HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const uint32_t* rids, HWND hScrb, const char* nodeStr)
     {
-        if (wParam == rids[0])
+        if (wParam == rids[SPEED_DIRECT_FIRST_INDEX]) {
             SendMessage(hScrb, TBM_SETPOS, 1, SLIDER_MAX);
-        if (wParam == rids[1])
+            actualSpeed[rids[CHANNEL_INDEX]] = 15;
+        }
+        if (wParam == rids[SPEED_DIRECT_FIRST_INDEX + 1]) {
             SendMessage(hScrb, TBM_SETPOS, 1, SLIDER_MIN);
-        if (wParam == rids[2])
+            actualSpeed[rids[CHANNEL_INDEX]] = -15;
+        }
+        if (wParam == rids[SPEED_DIRECT_FIRST_INDEX + 2]) {
             SendMessage(hScrb, TBM_SETPOS, 1, 0);
+            actualSpeed[rids[CHANNEL_INDEX]] = 0;
+        }
 
         ExecuteCommand(hDlg, wParam, nodeCntrId, nodeStr, rids);
+
+        if (wParam == rids[SPEED_DEC_INDEX] || rids[SPEED_INC_INDEX])
+            SendMessage(hScrb, TBM_SETPOS, 1, actualSpeed[rids[CHANNEL_INDEX]]);
 
     });
 
@@ -277,6 +331,9 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP13:
             case IDC_BUTTON_MP14:
             case IDC_BUTTON_MP15:
+            case IDC_BUTTON_COMEXEC1:
+            case IDC_BUTTON_MINUS1:
+            case IDC_BUTTON_PLUS1:
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS1, rids1, hScrb0, "0");
                 break;
             case IDC_BUTTON_SB2:
@@ -287,6 +344,9 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP23:
             case IDC_BUTTON_MP24:
             case IDC_BUTTON_MP25:
+            case IDC_BUTTON_COMEXEC2:
+            case IDC_BUTTON_MINUS2:
+            case IDC_BUTTON_PLUS2:
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS2, rids2, hScrb1, "1");
                 break;
             case IDC_BUTTON_SB3:
@@ -297,6 +357,9 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP33:
             case IDC_BUTTON_MP34:
             case IDC_BUTTON_MP35:
+            case IDC_BUTTON_COMEXEC3:
+            case IDC_BUTTON_MINUS3:
+            case IDC_BUTTON_PLUS3:
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS3, rids3, hScrb2, "2");
                 break;
             case IDC_BUTTON_SB4:
@@ -307,6 +370,9 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_MP43:
             case IDC_BUTTON_MP44:
             case IDC_BUTTON_MP45:
+            case IDC_BUTTON_COMEXEC4:
+            case IDC_BUTTON_MINUS4:
+            case IDC_BUTTON_PLUS4:
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS4, rids4, hScrb3, "3");
                 break;
 
@@ -627,21 +693,38 @@ bool ChangeStatus(HWND hDlg, std::string& strReceive)
     return true;
 }
 
+std::string ToggleFunction(int channel, int functionID)
+{
+    static int mask[] = {0x10, 8, 4, 2, 1};
+    actualFunction[channel] = actualFunction[channel] ^ mask[functionID];
+    int command = actualFunction[channel] | 0x80;
+    char tmp[10];
+    sprintf_s(tmp, "%02X", command);
+    std::string ret = tmp;
+    return ret;
+}
+
 
 bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* nodeStr, const uint32_t * rids)
 {
-    HWND hCtrl = GetDlgItem(hDlg, rids[0]);
-    LONG style = GetWindowLongA(hCtrl, GWL_STYLE);
+//    HWND hCtrl = GetDlgItem(hDlg, rids[SPEED_DIRECT_FIRST_INDEX]);
+//    LONG style = GetWindowLongA(hCtrl, GWL_STYLE);
  //   LONG extStyle = GetWindowLongA(hCtrl, GWL_EXSTYLE);
 
-    const char* dccCommandPart2 = nullptr;
-    if (style & WS_GROUP) {
-        for (int i = 0; rids[i] != 0; ++i) {
+    std::string dccCommandPart2;
+//    if (style & WS_GROUP) {
+        for (int i = SPEED_DIRECT_FIRST_INDEX; i <= SPEED_DIRECT_LAST_INDEX; ++i) {
             if (rids[i] == wParam)
                 dccCommandPart2 = dccCommandsRadioButton[i];
         }
+        for (int i = FUNC_FIRST_INDEX; i <= FUNC_LAST_INDEX; ++i) {
+            if (rids[i] == wParam)
+                dccCommandPart2 = ToggleFunction(rids[CHANNEL_INDEX], i - FUNC_FIRST_INDEX);
+        }
 
-    }
+//    }
+/*
+     
     else {
         for (int i = 0; rids[i] != 0; ++i) {
             if (rids[i] == wParam)
@@ -649,7 +732,7 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
         }
 
     }
-
+*/
 
     char ipAddr[20];
     SendDlgItemMessageA(hDlg,
@@ -665,7 +748,48 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
         (WPARAM)sizeof(nodeID),
         (LPARAM)nodeID);
     std::string dccCommand(nodeID);
-    dccCommand += dccCommandPart2;
+    if (dccCommand.length() == 0)
+        return false;
+    if (dccCommand.length() == 1)
+        dccCommand.insert(dccCommand.begin(), '0');
+
+    if (dccCommandPart2.length() == 0) {
+        if (wParam == rids[SPEED_DEC_INDEX]) {
+            if (actualSpeed[rids[CHANNEL_INDEX]] > -14)
+                actualSpeed[rids[CHANNEL_INDEX]]--;
+        }
+        else if (wParam == rids[SPEED_INC_INDEX]) {
+            if (actualSpeed[rids[CHANNEL_INDEX]] < 14)
+                actualSpeed[rids[CHANNEL_INDEX]]++;
+
+        }
+        if (wParam == rids[SPEED_DEC_INDEX] || wParam == rids[SPEED_INC_INDEX]) {
+            if (actualSpeed[rids[CHANNEL_INDEX]] == 0) {
+                dccCommand += "70";
+            }
+            else if (actualSpeed[rids[CHANNEL_INDEX]] > 0) {
+                char expCommand[10];
+                sprintf_s(expCommand, "%02X", (actualSpeed[rids[CHANNEL_INDEX]] + 1 + 0x70));
+                dccCommand += expCommand;
+            }
+            else {
+                char expCommand[10];
+                sprintf_s(expCommand, "%02X", (-actualSpeed[rids[CHANNEL_INDEX]] + 1 + 0x50));
+                dccCommand += expCommand;
+            }
+        }
+        else if (wParam == rids[EXPL_COMM_INDEX]) {
+            char expCommand[10];
+            SendDlgItemMessageA(hDlg,
+                rids[EXPL_EDIT_INDEX],
+                WM_GETTEXT,
+                (WPARAM)sizeof(expCommand),
+                (LPARAM)expCommand);
+            dccCommand += expCommand;
+        }
+        else return false;
+    } else 
+        dccCommand += dccCommandPart2;
 
     AppendTimeStamp(dccCommand);
 

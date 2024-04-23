@@ -19,6 +19,7 @@ bool SaveDCCDlgContent(HWND hDlg, std::string& feedback);
 bool ReadDCCDlgContent(HWND hDlg, std::string& feedback);
 bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrID, const char* nodeStr, const uint32_t* rids);
 bool AppendTimeStamp(std::string& dccCommand);
+bool ChangeStatus(HWND hDlg, std::string& strReceive);
 
 const char* dccCommandsPushButton[] = {
     "7F",   // forward full speed
@@ -201,6 +202,30 @@ int actualFunction[4] = { 0, 0, 0, 0 };
 bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos);
 bool InitSliders(HWND hDlg);
 
+
+bool ExecuteEmergencyStopCommand(HWND hDlg, WPARAM wParam)
+{
+    char ipAddr[20];
+    SendDlgItemMessageA(hDlg,
+        IDC_EDIT_IPADDRESS,
+        WM_GETTEXT,
+        (WPARAM)sizeof(ipAddr),
+        (LPARAM)ipAddr);
+
+    std::string nodeStr = "0";
+    std::string dccCommand = "0061";
+    AppendTimeStamp(dccCommand);
+
+    std::string strReceive;
+
+    SendURL(ipAddr, nodeStr.c_str(), dccCommand.c_str(), strReceive, strDCCFeedback);
+    ChangeStatus(hDlg, strReceive);
+
+    InvalidateRect(hWndMain, NULL, TRUE);
+    return true;
+}
+
+
 // Message handler for about box.
 INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -323,14 +348,36 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
     case WM_COMMAND:
         {
             switch (wParam) {
+            case IDC_EMERGENCYSTOP:
+                ExecuteEmergencyStopCommand(hDlg, wParam);
             case IDC_BUTTON_SB1:
             case IDC_BUTTON_SF1:
             case IDC_BUTTON_SS1:
-            case IDC_BUTTON_MP11:
-            case IDC_BUTTON_MP12:
-            case IDC_BUTTON_MP13:
-            case IDC_BUTTON_MP14:
-            case IDC_BUTTON_MP15:
+            case IDC_CHECK1:
+            case IDC_CHECK2:
+            case IDC_CHECK3:
+            case IDC_CHECK4:
+            case IDC_CHECK5:
+            case IDC_CHECK6:
+            case IDC_CHECK7:
+            case IDC_CHECK8:
+            case IDC_CHECK9:
+            case IDC_CHECK10:
+            case IDC_CHECK11:
+            case IDC_CHECK12:
+            case IDC_CHECK13:
+            case IDC_CHECK14:
+            case IDC_CHECK15:
+            case IDC_CHECK16:
+            case IDC_CHECK17:
+            case IDC_CHECK18:
+            case IDC_CHECK19:
+            case IDC_CHECK20:
+            case IDC_CHECK21:
+            case IDC_CHECK22:
+            case IDC_CHECK23:
+            case IDC_CHECK24:
+            case IDC_CHECK25:
             case IDC_BUTTON_COMEXEC1:
             case IDC_BUTTON_MINUS1:
             case IDC_BUTTON_PLUS1:
@@ -339,11 +386,31 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_SB2:
             case IDC_BUTTON_SF2:
             case IDC_BUTTON_SS2:
-            case IDC_BUTTON_MP21:
-            case IDC_BUTTON_MP22:
-            case IDC_BUTTON_MP23:
-            case IDC_BUTTON_MP24:
-            case IDC_BUTTON_MP25:
+            case IDC_CHECK26:
+            case IDC_CHECK27:
+            case IDC_CHECK28:
+            case IDC_CHECK29:
+            case IDC_CHECK30:
+            case IDC_CHECK31:
+            case IDC_CHECK32:
+            case IDC_CHECK33:
+            case IDC_CHECK34:
+            case IDC_CHECK35:
+            case IDC_CHECK36:
+            case IDC_CHECK37:
+            case IDC_CHECK38:
+            case IDC_CHECK39:
+            case IDC_CHECK40:
+            case IDC_CHECK41:
+            case IDC_CHECK42:
+            case IDC_CHECK43:
+            case IDC_CHECK44:
+            case IDC_CHECK45:
+            case IDC_CHECK46:
+            case IDC_CHECK47:
+            case IDC_CHECK48:
+            case IDC_CHECK49:
+            case IDC_CHECK50:
             case IDC_BUTTON_COMEXEC2:
             case IDC_BUTTON_MINUS2:
             case IDC_BUTTON_PLUS2:
@@ -352,11 +419,31 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_SB3:
             case IDC_BUTTON_SF3:
             case IDC_BUTTON_SS3:
-            case IDC_BUTTON_MP31:
-            case IDC_BUTTON_MP32:
-            case IDC_BUTTON_MP33:
-            case IDC_BUTTON_MP34:
-            case IDC_BUTTON_MP35:
+            case IDC_CHECK51:
+            case IDC_CHECK52:
+            case IDC_CHECK53:
+            case IDC_CHECK54:
+            case IDC_CHECK55:
+            case IDC_CHECK56:
+            case IDC_CHECK57:
+            case IDC_CHECK58:
+            case IDC_CHECK59:
+            case IDC_CHECK60:
+            case IDC_CHECK61:
+            case IDC_CHECK62:
+            case IDC_CHECK63:
+            case IDC_CHECK64:
+            case IDC_CHECK65:
+            case IDC_CHECK66:
+            case IDC_CHECK67:
+            case IDC_CHECK68:
+            case IDC_CHECK69:
+            case IDC_CHECK70:
+            case IDC_CHECK71:
+            case IDC_CHECK72:
+            case IDC_CHECK73:
+            case IDC_CHECK74:
+            case IDC_CHECK75:
             case IDC_BUTTON_COMEXEC3:
             case IDC_BUTTON_MINUS3:
             case IDC_BUTTON_PLUS3:
@@ -365,11 +452,31 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_BUTTON_SB4:
             case IDC_BUTTON_SF4:
             case IDC_BUTTON_SS4:
-            case IDC_BUTTON_MP41:
-            case IDC_BUTTON_MP42:
-            case IDC_BUTTON_MP43:
-            case IDC_BUTTON_MP44:
-            case IDC_BUTTON_MP45:
+            case IDC_CHECK76:
+            case IDC_CHECK77:
+            case IDC_CHECK78:
+            case IDC_CHECK79:
+            case IDC_CHECK80:
+            case IDC_CHECK81:
+            case IDC_CHECK82:
+            case IDC_CHECK83:
+            case IDC_CHECK84:
+            case IDC_CHECK85:
+            case IDC_CHECK86:
+            case IDC_CHECK87:
+            case IDC_CHECK88:
+            case IDC_CHECK89:
+            case IDC_CHECK90:
+            case IDC_CHECK91:
+            case IDC_CHECK92:
+            case IDC_CHECK93:
+            case IDC_CHECK94:
+            case IDC_CHECK95:
+            case IDC_CHECK96:
+            case IDC_CHECK97:
+            case IDC_CHECK98:
+            case IDC_CHECK99:
+            case IDC_CHECK100:
             case IDC_BUTTON_COMEXEC4:
             case IDC_BUTTON_MINUS4:
             case IDC_BUTTON_PLUS4:

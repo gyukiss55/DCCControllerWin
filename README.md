@@ -19,3 +19,4 @@ DCC Controller Windows
 16. V1.16.00 Save and Load
 17. V1.17.00 device rect size
 18. V1.17.00 some fixes: channel, function, speed, explicit command
+19. V1.18.00 alert stop, f1-f25 function

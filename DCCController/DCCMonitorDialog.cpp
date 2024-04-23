@@ -54,11 +54,11 @@ const char* dccCommandsRadioButton[] = {
 #define SPEED_DIRECT_FIRST_INDEX    1
 #define SPEED_DIRECT_LAST_INDEX     3
 #define FUNC_FIRST_INDEX            4
-#define FUNC_LAST_INDEX             8
-#define SPEED_DEC_INDEX             9
-#define SPEED_INC_INDEX             10
-#define EXPL_COMM_INDEX             11
-#define EXPL_EDIT_INDEX             12
+#define FUNC_LAST_INDEX             29
+#define SPEED_DEC_INDEX             30
+#define SPEED_INC_INDEX             31
+#define EXPL_COMM_INDEX             32
+#define EXPL_EDIT_INDEX             33
 
 
 const uint32_t rids1[] = {
@@ -68,11 +68,31 @@ const uint32_t rids1[] = {
     IDC_BUTTON_SB1,
     IDC_BUTTON_SS1,
 
-    IDC_BUTTON_MP11,
-    IDC_BUTTON_MP12,
-    IDC_BUTTON_MP13,
-    IDC_BUTTON_MP14,
-    IDC_BUTTON_MP15,
+    IDC_CHECK1,
+    IDC_CHECK2,
+    IDC_CHECK3,
+    IDC_CHECK4,
+    IDC_CHECK5,
+    IDC_CHECK6,
+    IDC_CHECK7,
+    IDC_CHECK8,
+    IDC_CHECK9,
+    IDC_CHECK10,
+    IDC_CHECK11,
+    IDC_CHECK12,
+    IDC_CHECK13,
+    IDC_CHECK14,
+    IDC_CHECK15,
+    IDC_CHECK16,
+    IDC_CHECK17,
+    IDC_CHECK18,
+    IDC_CHECK19,
+    IDC_CHECK20,
+    IDC_CHECK21,
+    IDC_CHECK22,
+    IDC_CHECK23,
+    IDC_CHECK24,
+    IDC_CHECK25,
 
     IDC_BUTTON_MINUS1,
     IDC_BUTTON_PLUS1,
@@ -90,11 +110,31 @@ const uint32_t rids2[] = {
     IDC_BUTTON_SB2,
     IDC_BUTTON_SS2,
 
-    IDC_BUTTON_MP21,
-    IDC_BUTTON_MP22,
-    IDC_BUTTON_MP23,
-    IDC_BUTTON_MP24,
-    IDC_BUTTON_MP25,
+    IDC_CHECK26,
+    IDC_CHECK27,
+    IDC_CHECK28,
+    IDC_CHECK29,
+    IDC_CHECK30,
+    IDC_CHECK31,
+    IDC_CHECK32,
+    IDC_CHECK33,
+    IDC_CHECK34,
+    IDC_CHECK35,
+    IDC_CHECK36,
+    IDC_CHECK37,
+    IDC_CHECK38,
+    IDC_CHECK39,
+    IDC_CHECK40,
+    IDC_CHECK41,
+    IDC_CHECK42,
+    IDC_CHECK43,
+    IDC_CHECK44,
+    IDC_CHECK45,
+    IDC_CHECK46,
+    IDC_CHECK47,
+    IDC_CHECK48,
+    IDC_CHECK49,
+    IDC_CHECK50,
 
     IDC_BUTTON_MINUS2,
     IDC_BUTTON_PLUS2,
@@ -113,11 +153,31 @@ const uint32_t rids3[] = {
     IDC_BUTTON_SB3,
     IDC_BUTTON_SS3,
 
-    IDC_BUTTON_MP31,
-    IDC_BUTTON_MP32,
-    IDC_BUTTON_MP33,
-    IDC_BUTTON_MP34,
-    IDC_BUTTON_MP35,
+    IDC_CHECK51,
+    IDC_CHECK52,
+    IDC_CHECK53,
+    IDC_CHECK54,
+    IDC_CHECK55,
+    IDC_CHECK56,
+    IDC_CHECK57,
+    IDC_CHECK58,
+    IDC_CHECK59,
+    IDC_CHECK60,
+    IDC_CHECK61,
+    IDC_CHECK62,
+    IDC_CHECK63,
+    IDC_CHECK64,
+    IDC_CHECK65,
+    IDC_CHECK66,
+    IDC_CHECK67,
+    IDC_CHECK68,
+    IDC_CHECK69,
+    IDC_CHECK70,
+    IDC_CHECK71,
+    IDC_CHECK72,
+    IDC_CHECK73,
+    IDC_CHECK74,
+    IDC_CHECK75,
 
     IDC_BUTTON_MINUS3,
     IDC_BUTTON_PLUS3,
@@ -134,12 +194,32 @@ const uint32_t rids4[] = {
     IDC_BUTTON_SB4,
     IDC_BUTTON_SS4,
 
-    IDC_BUTTON_MP41,
-    IDC_BUTTON_MP42,
-    IDC_BUTTON_MP43,
-    IDC_BUTTON_MP44,
-    IDC_BUTTON_MP45,
-
+    IDC_CHECK76,
+    IDC_CHECK77,
+    IDC_CHECK78,
+    IDC_CHECK79,
+    IDC_CHECK80,
+    IDC_CHECK81,
+    IDC_CHECK82,
+    IDC_CHECK83,
+    IDC_CHECK84,
+    IDC_CHECK85,
+    IDC_CHECK86,
+    IDC_CHECK87,
+    IDC_CHECK88,
+    IDC_CHECK89,
+    IDC_CHECK90,
+    IDC_CHECK91,
+    IDC_CHECK92,
+    IDC_CHECK93,
+    IDC_CHECK94,
+    IDC_CHECK95,
+    IDC_CHECK96,
+    IDC_CHECK97,
+    IDC_CHECK98,
+    IDC_CHECK99,
+    IDC_CHECK100,
+    
     IDC_BUTTON_MINUS4,
     IDC_BUTTON_PLUS4,
 
@@ -197,13 +277,19 @@ HWND hScrb2 = 0;
 HWND hScrb3 = 0;
 
 int actualSpeed[4] = { 0, 0, 0, 0 };
-int actualFunction[4] = { 0, 0, 0, 0 };
+int actualFunction[4*6] = {
+        0, 0, 0, 0, // F0- F4
+        0, 0, 0, 0, // F5- F8
+        0, 0, 0, 0, // F9- F12
+        0, 0, 0, 0, // F13- F20
+        0, 0, 0, 0, // F21- F28
+        0, 0, 0, 0  // F29- F35
+    };
 
 bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos);
 bool InitSliders(HWND hDlg);
 
-
-bool ExecuteEmergencyStopCommand(HWND hDlg, WPARAM wParam)
+std::string ReadIPAddress(HWND hDlg)
 {
     char ipAddr[20];
     SendDlgItemMessageA(hDlg,
@@ -211,6 +297,13 @@ bool ExecuteEmergencyStopCommand(HWND hDlg, WPARAM wParam)
         WM_GETTEXT,
         (WPARAM)sizeof(ipAddr),
         (LPARAM)ipAddr);
+    return std::string(ipAddr);
+}
+
+
+bool ExecuteEmergencyStopCommand(HWND hDlg, WPARAM wParam)
+{
+    std::string ipAddress = ReadIPAddress(hDlg);
 
     std::string nodeStr = "0";
     std::string dccCommand = "0061";
@@ -218,7 +311,7 @@ bool ExecuteEmergencyStopCommand(HWND hDlg, WPARAM wParam)
 
     std::string strReceive;
 
-    SendURL(ipAddr, nodeStr.c_str(), dccCommand.c_str(), strReceive, strDCCFeedback);
+    SendURL(ipAddress.c_str(), nodeStr.c_str(), dccCommand.c_str(), strReceive, strDCCFeedback);
     ChangeStatus(hDlg, strReceive);
 
     InvalidateRect(hWndMain, NULL, TRUE);
@@ -800,14 +893,63 @@ bool ChangeStatus(HWND hDlg, std::string& strReceive)
     return true;
 }
 
-std::string ToggleFunction(int channel, int functionID)
+struct MapID2Command {
+    uint8_t idFrom;
+    uint8_t idTo;
+    uint8_t command1;
+    uint8_t commandLength;
+    uint8_t* mask;
+};
+
+uint8_t mask_0_4[] = { 0x10, 1, 2, 4, 8 };
+uint8_t mask_5_12[] = { 1, 2, 4, 8 };
+uint8_t mask_13_28[] = {1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80};
+
+MapID2Command commandMaps[] = {
+    {0, 4, 0x80, 1, mask_0_4 },
+    {5, 8, 0xB0, 1, mask_5_12 },
+    {9, 12, 0xA0, 1, mask_5_12 },
+    {13, 20, 0xDE, 2, mask_13_28 },
+    {21, 28, 0xDF, 2, mask_13_28 },
+
+    {0, 0, 0, 0, nullptr }
+};
+
+std::string ToggleFunction(int channel, int functionID, int state)
 {
-    static int mask[] = {0x10, 8, 4, 2, 1};
-    actualFunction[channel] = actualFunction[channel] ^ mask[functionID];
-    int command = actualFunction[channel] | 0x80;
-    char tmp[10];
-    sprintf_s(tmp, "%02X", command);
-    std::string ret = tmp;
+    // f0 - f4 - 0x80-0x9F      1 0 0 F0 F4 F3 F2 F1
+    // f5 - f12 - 0xA0-0xBF     1 0 1 1 F8 F7 F6 F5
+    //                          1 0 1 0 F12 F11 F10 F9
+    // f13 - f20 - 0xDE ,  F20 F19 F18 F17 F16 F15 F14 F13 (2 byte command !)
+    // f21 - f28 - 0xDF ,  F28 F27 F26 F25 F24 F23 F22 F21 (2 byte command !)
+    // f29 - f36 - 0xD8 ,  F28 F27 F26 F25 F24 F23 F22 F21 (2 byte command !)
+    // f37 - f44 - 0xD9 ,  F28 F27 F26 F25 F24 F23 F22 F21 (2 byte command !)
+    // f45 - f52 - 0xDA ,  F28 F27 F26 F25 F24 F23 F22 F21 (2 byte command !)
+    // f53 - f60 - 0xDB ,  F28 F27 F26 F25 F24 F23 F22 F21 (2 byte command !)
+    // f61 - f68 - 0xDC ,  F28 F27 F26 F25 F24 F23 F22 F21 (2 byte command !)
+
+    std::string ret;
+    int value = 0;
+    for (int i = 0; commandMaps[i].commandLength > 0; i++) {
+        if (commandMaps[i].idFrom <= functionID && commandMaps[i].idTo >= functionID) {
+            char postCommand[10];
+            value = actualFunction[channel*4+i];
+            if (state)
+                value |= commandMaps[i].mask [functionID - commandMaps[i].idFrom];
+            else
+                value &= (commandMaps[i].mask [functionID - commandMaps[i].idFrom]) ^ 0xff;
+            actualFunction[channel * 4 + i] = value;
+            if (commandMaps[i].commandLength == 2) {
+                sprintf_s(postCommand, "%02X%02X", commandMaps[i].command1, value);
+            }
+            else {
+                sprintf_s(postCommand, "%02X", value + commandMaps[i].command1);
+            }
+            ret = postCommand;
+            break;
+        }
+    }
+
     return ret;
 }
 
@@ -816,37 +958,22 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
 {
 //    HWND hCtrl = GetDlgItem(hDlg, rids[SPEED_DIRECT_FIRST_INDEX]);
 //    LONG style = GetWindowLongA(hCtrl, GWL_STYLE);
- //   LONG extStyle = GetWindowLongA(hCtrl, GWL_EXSTYLE);
+//    LONG extStyle = GetWindowLongA(hCtrl, GWL_EXSTYLE);
 
     std::string dccCommandPart2;
-//    if (style & WS_GROUP) {
-        for (int i = SPEED_DIRECT_FIRST_INDEX; i <= SPEED_DIRECT_LAST_INDEX; ++i) {
-            if (rids[i] == wParam)
-                dccCommandPart2 = dccCommandsRadioButton[i];
-        }
-        for (int i = FUNC_FIRST_INDEX; i <= FUNC_LAST_INDEX; ++i) {
-            if (rids[i] == wParam)
-                dccCommandPart2 = ToggleFunction(rids[CHANNEL_INDEX], i - FUNC_FIRST_INDEX);
-        }
-
-//    }
-/*
-     
-    else {
-        for (int i = 0; rids[i] != 0; ++i) {
-            if (rids[i] == wParam)
-                dccCommandPart2 = dccCommandsPushButton[i];
-        }
-
+    for (int i = SPEED_DIRECT_FIRST_INDEX; i <= SPEED_DIRECT_LAST_INDEX; ++i) {
+        if (rids[i] == wParam)
+            dccCommandPart2 = dccCommandsRadioButton[i];
     }
-*/
+    for (int i = FUNC_FIRST_INDEX; i <= FUNC_LAST_INDEX; ++i) {
+        if (rids[i] == wParam) {
+            LRESULT state = SendDlgItemMessageA(hDlg, wParam, BM_GETSTATE, 0, 0);
+            dccCommandPart2 = ToggleFunction(rids[CHANNEL_INDEX], i - FUNC_FIRST_INDEX, (state & BST_CHECKED));
+        }
+    }
 
-    char ipAddr[20];
-    SendDlgItemMessageA(hDlg,
-        IDC_EDIT_IPADDRESS,
-        WM_GETTEXT,
-        (WPARAM)sizeof(ipAddr),
-        (LPARAM)ipAddr);
+
+    std::string ipAddress = ReadIPAddress(hDlg);
 
     char nodeID[10];
     SendDlgItemMessageA(hDlg,
@@ -902,7 +1029,7 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
 
     std::string strReceive;
 
-    SendURL(ipAddr, nodeStr, dccCommand.c_str (), strReceive, strDCCFeedback);
+    SendURL(ipAddress.c_str(), nodeStr, dccCommand.c_str(), strReceive, strDCCFeedback);
     ChangeStatus(hDlg, strReceive);
 
     InvalidateRect(hWndMain, NULL, TRUE);
@@ -911,7 +1038,6 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
 
 bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos)
 {
-    char ipAddr[20];
     char dccCommandPart2[3] = { '4', '0', 0 };
     char nodeStr[2] = { '0', 0 };
 
@@ -937,11 +1063,7 @@ bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos)
     else if (pos != 0)
         return false;
   
-    SendDlgItemMessageA(hDlg,
-        IDC_EDIT_IPADDRESS,
-        WM_GETTEXT,
-        (WPARAM)sizeof(ipAddr),
-        (LPARAM)ipAddr);
+    std::string ipAddress = ReadIPAddress(hDlg);
 
     char nodeID[10];
     SendDlgItemMessageA(hDlg,
@@ -957,7 +1079,7 @@ bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos)
 
     std::string strReceive;
 
-    SendURL(ipAddr, nodeStr, dccCommand.c_str (), strReceive, strDCCFeedback);
+    SendURL(ipAddress.c_str(), nodeStr, dccCommand.c_str(), strReceive, strDCCFeedback);
     InvalidateRect(hWndMain, NULL, TRUE);
     return true;
 }

@@ -10,8 +10,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
-//#include <synchapi.h>
+
 #include "ClientSendRec.h"
+#include "MeasureTime.h"
 
 
 // Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
@@ -36,7 +37,8 @@ int32_t __cdecl ClientSendRec(const char* serverName, const char* sendText, std:
     int iResult;
     int recvbuflen = DEFAULT_BUFLEN;
 
- 
+    MeasureTime mt("ClientSendRec");
+
     // Initialize Winsock
     iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (iResult != 0) {
@@ -96,8 +98,8 @@ int32_t __cdecl ClientSendRec(const char* serverName, const char* sendText, std:
         return 1;
     }
 
-    printf("Bytes Sent: %ld\n", iResult);
-    Sleep(50);
+    //printf("Bytes Sent: %ld\n", iResult);
+    Sleep(10);
 
     // shutdown the connection since no more data will be sent
     iResult = shutdown(ConnectSocket, SD_SEND);
@@ -113,16 +115,20 @@ int32_t __cdecl ClientSendRec(const char* serverName, const char* sendText, std:
 
         iResult = recv(ConnectSocket, recvbuf, recvbuflen - 1, 0);
         if (iResult > 0) {
-            printf("Bytes received: %d\n", iResult);
             recvbuf[iResult] = 0;
-            printf("Received: %s\n", recvbuf);
-            OutputDebugStringA(recvbuf);
+//            printf("Bytes received: %d\n", iResult);
+//            printf("Received: %s\n", recvbuf);
+//            OutputDebugStringA(recvbuf);
             receiveText = recvbuf;
         }
-        else if (iResult == 0)
-            printf("Connection closed\n");
-        else
-            printf("recv failed with error: %d\n", WSAGetLastError());
+        else if (iResult == 0) {
+           // printf("Connection closed\n");
+
+        }
+        else {
+            //printf("recv failed with error: %d\n", WSAGetLastError());
+
+        }
 
     } while (iResult > 0);
 

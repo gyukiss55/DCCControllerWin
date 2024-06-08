@@ -144,13 +144,17 @@
     <ClInclude Include="DCCMonitorDialog.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="FileIO.h" />
+    <ClInclude Include="MacroImporter.h" />
+    <ClInclude Include="MeasureTime.h" />
     <ClInclude Include="RailDevice.h" />
     <ClInclude Include="RegistryIO.h" />
+    <ClInclude Include="SemaphoreHandling.h" />
     <ClInclude Include="SliderControl.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SendURL.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="WEBGetCommand.h" />
+    <ClInclude Include="Win32Utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClientSendRec.cpp" />
@@ -159,13 +163,17 @@
     <ClCompile Include="DCCMonitorDialog.cpp" />
     <ClCompile Include="FIleIO.cpp" />
     <ClCompile Include="JPEGTest.cpp" />
+    <ClCompile Include="MacroImporter.cpp" />
+    <ClCompile Include="MeasureTime.cpp" />
     <ClCompile Include="RailDevice.cpp" />
     <ClCompile Include="RegistryIO.cpp" />
+    <ClCompile Include="SemaphoreHandling.cpp" />
     <ClCompile Include="SendURL.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories);G:\Work\GitHub\curl-7.81.0-win64-mingw\include;$(_ZVcpkgCurrentInstalledDir)include</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories);G:\Work\GitHub\curl-7.81.0-win64-mingw\include;$(_ZVcpkgCurrentInstalledDir)include</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="WEBGetCommand.cpp" />
+    <ClCompile Include="Win32Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DCCController.rc" />

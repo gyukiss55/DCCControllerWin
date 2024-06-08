@@ -18,6 +18,8 @@ DCC Controller Windows
 15. V1.15.00 Mark Railroad switch
 16. V1.16.00 Save and Load
 17. V1.17.00 device rect size
-18. V1.17.00 some fixes: channel, function, speed, explicit command
-19. V1.18.00 alert stop, f1-f25 function
-20. V1.19.00 fixing speed control
+18. V1.18.00 some fixes: channel, function, speed, explicit command
+19. V1.19.00 alert stop, f1-f25 function
+20. V1.20.00 fixing speed control
+21. V1.21.00 todo: speed value, speed increment +/-24, F26-F30
+21. V1.22.00 todo: macro execute

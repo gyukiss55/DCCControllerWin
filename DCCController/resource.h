@@ -240,6 +240,29 @@
 #define IDC_CHECK100                    1207
 #define IDC_BUTTON1                     1208
 #define IDC_EMERGENCYSTOP               1208
+#define IDC_CHECK101                    1209
+#define IDC_CHECK102                    1210
+#define IDC_CHECK103                    1211
+#define IDC_CHECK104                    1212
+#define IDC_CHECK105                    1213
+#define IDC_CHECK106                    1214
+#define IDC_CHECK107                    1215
+#define IDC_CHECK108                    1216
+#define IDC_CHECK109                    1217
+#define IDC_CHECK110                    1218
+#define IDC_CHECK111                    1219
+#define IDC_CHECK112                    1220
+#define IDC_CHECK113                    1221
+#define IDC_CHECK114                    1222
+#define IDC_CHECK115                    1223
+#define IDC_CHECK116                    1224
+#define IDC_CHECK117                    1225
+#define IDC_CHECK118                    1226
+#define IDC_CHECK119                    1227
+#define IDC_CHECK120                    1228
+#define IDC_COMBO_MACRO                 1229
+#define IDC_BUTTON2                     1230
+#define IDC_BUTTON_EXECMAC              1230
 #define IDM_CONTROL_DCCCONTROL          32772
 #define ID_CONTROL_DCC                  32773
 #define ID_CONTROL_DCC_MONITOR          32774
@@ -258,7 +281,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         32781
-#define _APS_NEXT_CONTROL_VALUE         1209
+#define _APS_NEXT_CONTROL_VALUE         1231
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

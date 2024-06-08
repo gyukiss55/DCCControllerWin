@@ -4,12 +4,18 @@
 
 #include "resource.h"
 #include "framework.h"
+
+#include <format>
+#include <iostream>
 #include <string>
+#include <string_view>
+
 #include <CommCtrl.h>
 #include "DCCController.h"
 #include "DCCMonitorDialog.h"
 #include "SendURL.h"
 #include "RegistryIO.h"
+#include "MacroImporter.h"
 
 #define SLIDER_MIN -15
 #define SLIDER_MAX 15
@@ -96,6 +102,11 @@ const uint32_t rids1[] = {
     IDC_CHECK23,
     IDC_CHECK24,
     IDC_CHECK25,
+    IDC_CHECK101,
+    IDC_CHECK102,
+    IDC_CHECK103,
+    IDC_CHECK104,
+    IDC_CHECK105,
 
     0
 };
@@ -139,6 +150,11 @@ const uint32_t rids2[] = {
     IDC_CHECK48,
     IDC_CHECK49,
     IDC_CHECK50,
+    IDC_CHECK106,
+    IDC_CHECK107,
+    IDC_CHECK108,
+    IDC_CHECK109,
+    IDC_CHECK110,
 
     0
 };
@@ -183,6 +199,16 @@ const uint32_t rids3[] = {
     IDC_CHECK73,
     IDC_CHECK74,
     IDC_CHECK75,
+    IDC_CHECK111,
+    IDC_CHECK112,
+    IDC_CHECK113,
+    IDC_CHECK114,
+    IDC_CHECK115,
+    IDC_CHECK116,
+    IDC_CHECK117,
+    IDC_CHECK118,
+    IDC_CHECK119,
+    IDC_CHECK120,
 
     0
 };
@@ -225,7 +251,12 @@ const uint32_t rids4[] = {
     IDC_CHECK98,
     IDC_CHECK99,
     IDC_CHECK100,
-    
+    IDC_CHECK116,
+    IDC_CHECK117,
+    IDC_CHECK118,
+    IDC_CHECK119,
+    IDC_CHECK120,
+
     0
 };
 
@@ -276,6 +307,8 @@ HWND hScrb1 = 0;
 HWND hScrb2 = 0;
 HWND hScrb3 = 0;
 
+HWND hComboBox = 0;
+
 int actualSpeed[4] = { 0, 0, 0, 0 };
 int actualFunction[4*6] = {
         0, 0, 0, 0, // F0- F4
@@ -324,35 +357,95 @@ bool ExecuteEmergencyStopCommand(HWND hDlg, WPARAM wParam)
 }
 
 
+void InitCheckBoxes(HWND hDlg)
+{
+    std::wstring str;
+    HWND hWndControl = 0;
+    uint8_t j = 1;
+
+    const uint32_t* cbidPtrArray[] = { &rids1[0] , &rids2[0], &rids3[0], &rids4[0], nullptr};
+
+    for (uint32_t j = 0; j < 4; j++) {
+        const uint32_t* cbidPtr = cbidPtrArray[j] + 8;
+        for (uint32_t i = 0; i < 30; i++)
+        {
+            str = std::wstring(L"F");
+            str += std::to_wstring(i);
+            str += std::wstring(L"/");
+            str += std::to_wstring(j + 1);
+            hWndControl = GetDlgItem(hDlg, cbidPtr[i]);
+            SetWindowText(hWndControl, str.c_str());
+        }
+    }
+
+}
+
+void InitComboBox(HWND hDlg)
+{
+    MacroImporter* imp = MacroImporter::GetInsance();
+    if (imp) {
+        imp->Import();
+        HWND hWndCombo = GetDlgItem(hDlg, IDC_COMBO_MACRO);
+        for (int i = 0; i < imp->GetContainer().Get().size(); ++i) {
+            std::wstring name = imp->GetContainer().Get()[i].GetName();
+            SendMessage(hWndCombo, CB_ADDSTRING, 0, (LPARAM)name.c_str ());
+            int index = (int)SendMessage(hWndCombo, CB_GETCURSEL, 0, 0);
+            if (index != CB_ERR) {
+                int length = (int)SendMessage(hComboBox, CB_GETLBTEXTLEN, (WPARAM)index, 0);
+
+                wchar_t* buffer = (wchar_t*)malloc((length  + 1)* 2);
+
+                if (buffer) {
+                    SendMessage(hComboBox, CB_GETLBTEXT, (WPARAM)index, (LPARAM)buffer);
+                    imp->ExecuteMacro(buffer);
+
+                    free(buffer);
+                }
+            }
+        }
+    }
+}
+
+
+void ExecuteMacro(HWND hDlg)
+{
+    MacroImporter* imp = MacroImporter::GetInsance();
+    if (imp) {
+        HWND hWndCombo = GetDlgItem(hDlg, IDC_COMBO_MACRO);
+    }
+}
+
+
 // Message handler for about box.
 INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     auto initSliders([](HWND hDlg)
-    {
-        int pos1 = 0;
-        int pos2 = 0;
-        int actpos = 0;
+        {
+            int pos1 = 0;
+            int pos2 = 0;
+            int actpos = 0;
 
-        hScrb0 = GetDlgItem(hDlg, idcScrollbars[0]);
-        hScrb1 = GetDlgItem(hDlg, idcScrollbars[1]);
-        hScrb2 = GetDlgItem(hDlg, idcScrollbars[2]);
-        hScrb3 = GetDlgItem(hDlg, idcScrollbars[3]);
-        SendMessage(hScrb0, TBM_SETRANGEMIN, 1, SLIDER_MIN);
-        SendMessage(hScrb0, TBM_SETRANGEMAX, 1, SLIDER_MAX);
-        SendMessage(hScrb0, TBM_SETPOS, 1, 0);
-        SendMessage(hScrb1, TBM_SETRANGEMIN, 1, SLIDER_MIN);
-        SendMessage(hScrb1, TBM_SETRANGEMAX, 1, SLIDER_MAX);
-        SendMessage(hScrb1, TBM_SETPOS, 1, 0);
-        SendMessage(hScrb2, TBM_SETRANGEMIN, 1, SLIDER_MIN);
-        SendMessage(hScrb2, TBM_SETRANGEMAX, 1, SLIDER_MAX);
-        SendMessage(hScrb2, TBM_SETPOS, 1, 0);
-        SendMessage(hScrb3, TBM_SETRANGEMIN, 1, SLIDER_MIN);
-        SendMessage(hScrb3, TBM_SETRANGEMAX, 1, SLIDER_MAX);
-        SendMessage(hScrb3, TBM_SETPOS, 1, 0);
+            hScrb0 = GetDlgItem(hDlg, idcScrollbars[0]);
+            hScrb1 = GetDlgItem(hDlg, idcScrollbars[1]);
+            hScrb2 = GetDlgItem(hDlg, idcScrollbars[2]);
+            hScrb3 = GetDlgItem(hDlg, idcScrollbars[3]);
+            SendMessage(hScrb0, TBM_SETRANGEMIN, 1, SLIDER_MIN);
+            SendMessage(hScrb0, TBM_SETRANGEMAX, 1, SLIDER_MAX);
+            SendMessage(hScrb0, TBM_SETPOS, 1, 0);
+            SendMessage(hScrb1, TBM_SETRANGEMIN, 1, SLIDER_MIN);
+            SendMessage(hScrb1, TBM_SETRANGEMAX, 1, SLIDER_MAX);
+            SendMessage(hScrb1, TBM_SETPOS, 1, 0);
+            SendMessage(hScrb2, TBM_SETRANGEMIN, 1, SLIDER_MIN);
+            SendMessage(hScrb2, TBM_SETRANGEMAX, 1, SLIDER_MAX);
+            SendMessage(hScrb2, TBM_SETPOS, 1, 0);
+            SendMessage(hScrb3, TBM_SETRANGEMIN, 1, SLIDER_MIN);
+            SendMessage(hScrb3, TBM_SETRANGEMAX, 1, SLIDER_MAX);
+            SendMessage(hScrb3, TBM_SETPOS, 1, 0);
 
-        ReadDCCDlgContent(hDlg, strDCCFeedback);
+            ReadDCCDlgContent(hDlg, strDCCFeedback);
 
-    });
+        });
+
 
 
     auto executePushButtonCommand([](HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const uint32_t* rids, HWND hScrb, const char* nodeStr)
@@ -389,6 +482,8 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
     case WM_INITDIALOG:
         {
             initSliders(hDlg);
+            InitCheckBoxes(hDlg);
+            InitComboBox(hDlg);
 
 
             SendDlgItemMessageA(hDlg,
@@ -479,6 +574,11 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_CHECK23:
             case IDC_CHECK24:
             case IDC_CHECK25:
+            case IDC_CHECK101:
+            case IDC_CHECK102:
+            case IDC_CHECK103:
+            case IDC_CHECK104:
+            case IDC_CHECK105:
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS1, rids1, hScrb0, "0");
                 break;
             case IDC_BUTTON_SB2:
@@ -512,6 +612,11 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_CHECK48:
             case IDC_CHECK49:
             case IDC_CHECK50:
+            case IDC_CHECK106:
+            case IDC_CHECK107:
+            case IDC_CHECK108:
+            case IDC_CHECK109:
+            case IDC_CHECK110:
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS2, rids2, hScrb1, "1");
                 break;
             case IDC_BUTTON_SB3:
@@ -545,6 +650,11 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_CHECK73:
             case IDC_CHECK74:
             case IDC_CHECK75:
+            case IDC_CHECK111:
+            case IDC_CHECK112:
+            case IDC_CHECK113:
+            case IDC_CHECK114:
+            case IDC_CHECK115:
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS3, rids3, hScrb2, "2");
                 break;
             case IDC_BUTTON_SB4:
@@ -578,6 +688,11 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
             case IDC_CHECK98:
             case IDC_CHECK99:
             case IDC_CHECK100:
+            case IDC_CHECK116:
+            case IDC_CHECK117:
+            case IDC_CHECK118:
+            case IDC_CHECK119:
+            case IDC_CHECK120:
                 executePushButtonCommand(hDlg, wParam, IDC_EDIT_NODEADDRESS4, rids4, hScrb3, "3");
                 break;
 
@@ -617,6 +732,11 @@ INT_PTR CALLBACK DCCMonitorDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
                 {
                     ReadDCCDlgContent(hDlg, strDCCFeedback);
                     InvalidateRect(hWndMain, NULL, TRUE);
+                }
+                break;
+            case IDC_BUTTON_EXECMAC:
+                {
+                    ExecuteMacro(hDlg);
                 }
                 break;
 

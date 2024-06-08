@@ -11,6 +11,7 @@
 #include "SendURL.h"
 #include "ClientSendRec.h"
 #include "WEBGetCommand.h"
+#include "MeasureTime.h"
 
 std::string strFeedback;
 
@@ -28,6 +29,8 @@ void SendURL(
     std::string& receiveString,
     std::string& feedback)
 {
+    MeasureTime mt ("SendURL");
+
     strFeedback = "";
     std::string sendStr;
     sendStr += "/ec?ch=";

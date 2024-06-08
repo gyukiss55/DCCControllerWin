@@ -1,0 +1,12 @@
+# DCC macro
+
+# IP=192.168.50.131
+# Address=15 //  (DCC ID)
+# Delay=1.1 //  (in sec)
+# Forward=TRUE //  (or FALSE)
+# Backward=TRUE // (or FALSE)
+# Speed=1 // (0-28)
+# F0=ON  //(F0-F30=ON or OFF)
+# F1=ON // (OFF)
+# Exp=61 //
+# Exp=80 //

@@ -39,16 +39,18 @@ void SendURL(
     
     sendStr += dccCommand;
 
-    OutputDebugStringA("\nBefore Fill:\n");
+    //OutputDebugStringA("\nBefore Fill:\n");
+    OutputDebugStringA("\n");
     OutputDebugStringA(sendStr.c_str ());
 
     std::string sendString;
     FillinSendString(sendString, sendStr.c_str (), ipAddress);
     std::string recString;
-    OutputDebugStringA("\nAfter Fill:\n");
+    //OutputDebugStringA("\nAfter Fill:\n");
+    OutputDebugStringA("\n");
     OutputDebugStringA(sendString.c_str());
     int err = ClientSendRec(ipAddress, sendString.c_str(), recString);;
-    printf("ClientSendRec err:%d rec len:%zd rec str:#%s#\n", err, recString.length(), recString.c_str());
+    //printf("ClientSendRec err:%d rec len:%zd rec str:#%s#\n", err, recString.length(), recString.c_str());
     if (err != 0) {
         strFeedback += "ClientSendRec ERROR!!";
 
@@ -60,8 +62,8 @@ void SendURL(
         strFeedback += " Response:";
         strFeedback += recString;
 
-        OutputDebugStringA("\nRecString:\n");
-        OutputDebugStringA(recString.c_str ());
+        //OutputDebugStringA("\nRecString:\n");
+        //OutputDebugStringA(recString.c_str ());
 
         receiveString = recString;
     }

@@ -26,4 +26,4 @@ DCC Controller Windows
 23. V1.23.00 remove some output
 24. V1.24.00 explicite command
 25. V1.25.00 macro command step
-	1. 
+26. V1.26.00 mutex fixing

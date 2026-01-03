@@ -75,7 +75,7 @@ const uint32_t rids1[] = {
 
     IDC_BUTTON_COMEXEC1,
 
-    IDC_EDIT_EXPLICITE1,
+    IDC_EDIT_COMMAND1,
 
     IDC_CHECK1,
     IDC_CHECK2,
@@ -123,7 +123,7 @@ const uint32_t rids2[] = {
 
     IDC_BUTTON_COMEXEC2,
 
-    IDC_EDIT_EXPLICITE2,
+    IDC_EDIT_COMMAND2,
 
     IDC_CHECK26,
     IDC_CHECK27,
@@ -172,7 +172,7 @@ const uint32_t rids3[] = {
 
     IDC_BUTTON_COMEXEC3,
 
-    IDC_EDIT_EXPLICITE3,
+    IDC_EDIT_COMMAND3,
 
     IDC_CHECK51,
     IDC_CHECK52,
@@ -1138,11 +1138,12 @@ bool ExecuteCommand(HWND hDlg, WPARAM wParam, uint32_t nodeCntrId, const char* n
             }
         }
         else if (wParam == rids[EXPL_COMM_INDEX]) {
-            char expCommand[10];
+            char expCommand[100];
+            memset(expCommand, 0, sizeof(expCommand));
             SendDlgItemMessageA(hDlg,
                 rids[EXPL_EDIT_INDEX],
                 WM_GETTEXT,
-                (WPARAM)sizeof(expCommand),
+                (WPARAM)sizeof(expCommand - 1),
                 (LPARAM)expCommand);
             dccCommand += expCommand;
         }

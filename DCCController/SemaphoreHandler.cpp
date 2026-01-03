@@ -1,4 +1,4 @@
-// SemaphoreHandling.cpp
+// SemaphoreHandler.cpp
 
 
 #include <windows.h>
@@ -6,8 +6,7 @@
 #include <vector>
 #include <string>
 
-#include "SemaphoreHandling.h"
-
+#include "SemaphoreHandler.h"
 
 
 SemaphoreHandler* SemaphoreHandler::instance = nullptr;
@@ -230,8 +229,28 @@ SemaphoreHandler* SemaphoreHandler::GetInstance()
     return instance;
 }
 
-
 /* SemaphoreHandler end */
+
+/* AutoMutex begin */
+
+AutoMutex::AutoMutex(const wchar_t* nameIn)
+{
+    SemaphoreHandler* semaphoreHandler = SemaphoreHandler::GetInstance();
+    if (nameIn != nullptr)
+        name = nameIn;
+    semaphoreHandler->WaitForMutex(nameIn);
+}
+
+AutoMutex::~AutoMutex()
+{
+    SemaphoreHandler* semaphoreHandler = SemaphoreHandler::GetInstance();
+    if (name.length() > 0)
+        semaphoreHandler->ReleaseMutex(name.c_str());
+    else
+        semaphoreHandler->ReleaseMutex();
+}
+
+/* AutoMutex end */
 
 int CreateSemaphore() {
     // Initial count of the semaphore

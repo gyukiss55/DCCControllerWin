@@ -1,4 +1,4 @@
-//SemaphoreHandling.h
+//SemaphoreHander.h
 #pragma once
 
 #include <windows.h>
@@ -37,10 +37,17 @@ class SemaphoreHandler {
     static SemaphoreHandler* instance;
     SemaphoreHandler();
 public:
-    DWORD WaitForMutex(const wchar_t* name, DWORD millisec = INFINITE);
-    DWORD ReleaseMutex(const wchar_t* name);
-    DWORD WaitForSemaphore(const wchar_t* name, DWORD millisec = INFINITE);
-    DWORD ReleaseSemaphore(const wchar_t* name);
+    DWORD WaitForMutex(const wchar_t* name = nullptr, DWORD millisec = INFINITE);
+    DWORD ReleaseMutex(const wchar_t* name = nullptr);
+    DWORD WaitForSemaphore(const wchar_t* name = nullptr, DWORD millisec = INFINITE);
+    DWORD ReleaseSemaphore(const wchar_t* name = nullptr);
     static SemaphoreHandler* GetInstance();
+};
+
+class AutoMutex{
+    std::wstring name;
+public: 
+    AutoMutex(const wchar_t* name = nullptr);
+    ~AutoMutex();
 };
 

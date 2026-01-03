@@ -60,7 +60,7 @@
     <ClInclude Include="MeasureTime.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SemaphoreHandling.h">
+    <ClInclude Include="SemaphoreHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -104,7 +104,7 @@
     <ClCompile Include="MeasureTime.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SemaphoreHandling.cpp">
+    <ClCompile Include="SemaphoreHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

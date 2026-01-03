@@ -148,7 +148,7 @@
     <ClInclude Include="MeasureTime.h" />
     <ClInclude Include="RailDevice.h" />
     <ClInclude Include="RegistryIO.h" />
-    <ClInclude Include="SemaphoreHandling.h" />
+    <ClInclude Include="SemaphoreHandler.h" />
     <ClInclude Include="SliderControl.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SendURL.h" />
@@ -167,7 +167,7 @@
     <ClCompile Include="MeasureTime.cpp" />
     <ClCompile Include="RailDevice.cpp" />
     <ClCompile Include="RegistryIO.cpp" />
-    <ClCompile Include="SemaphoreHandling.cpp" />
+    <ClCompile Include="SemaphoreHandler.cpp" />
     <ClCompile Include="SendURL.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories);G:\Work\GitHub\curl-7.81.0-win64-mingw\include;$(_ZVcpkgCurrentInstalledDir)include</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories);G:\Work\GitHub\curl-7.81.0-win64-mingw\include;$(_ZVcpkgCurrentInstalledDir)include</AdditionalIncludeDirectories>

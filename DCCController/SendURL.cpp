@@ -12,6 +12,7 @@
 #include "ClientSendRec.h"
 #include "WEBGetCommand.h"
 #include "MeasureTime.h"
+#include "SemaphoreHandler.h"
 
 std::string strFeedback;
 
@@ -30,6 +31,8 @@ void SendURL(
     std::string& feedback)
 {
     MeasureTime mt ("SendURL");
+
+    AutoMutex mutex(L"SendURL");
 
     strFeedback = "";
     std::string sendStr;

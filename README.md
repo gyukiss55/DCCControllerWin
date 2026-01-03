@@ -22,4 +22,5 @@ DCC Controller Windows
 19. V1.19.00 alert stop, f1-f25 function
 20. V1.20.00 fixing speed control
 21. V1.21.00 todo: speed value, speed increment +/-24, F26-F30
-21. V1.22.00 todo: macro execute
+22. V1.22.00 todo: macro execute
+23. V1.23.00 remove some output

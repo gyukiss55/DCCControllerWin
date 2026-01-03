@@ -21,7 +21,7 @@ MeasureTime::~MeasureTime()
 {
     std::string str;
     GetElapsedTime(str);
-    OutputDebugStringA(str.c_str());
+    //OutputDebugStringA(str.c_str());
 }
 
 void MeasureTime::Init()

@@ -31,7 +31,9 @@ MutexItem::MutexItem(const wchar_t* nameIn) : ghMutex(0)
 
 MutexItem::~MutexItem()
 {
-    CloseHandle(ghMutex);
+    if (ghMutex && ghMutex != INVALID_HANDLE_VALUE) {
+        CloseHandle(ghMutex);
+    }
 }
 
 const std::wstring& MutexItem::Name()const
@@ -48,7 +50,6 @@ BOOL MutexItem::Release()
 {
     return ReleaseMutex(ghMutex);
 }
-
 
 /* MutexItem end */
 
@@ -120,54 +121,40 @@ SemaphoreHandler::SemaphoreHandler()
 {
 }
 
+size_t SemaphoreHandler::GetMutexItemIndex(const wchar_t* name) const
+{
+    for (size_t mi = 0; mi < mutexItems.size(); ++mi) {
+        if (name == nullptr) {
+            if (mutexItems[mi].Name().size() == 0) {
+                return mi;
+            }
+        } else {
+            if (mutexItems[mi].Name() == name) {
+                return mi;
+            }
+        }
+    }
+    return INFINITE;
+}
+
 DWORD SemaphoreHandler::WaitForMutex(const wchar_t* name, DWORD millisec)
 {
-    MutexItem* m = nullptr;
-    for (auto mi : mutexItems) {
-        if (name == nullptr) {
-            if (mi.Name().size() == 0) {
-                m = &mi;
-                break;
-            }
-        }
-        else {
-            if (mi.Name() == name) {
-                m = &mi;
-                break;
-            }
-
-        }
+    size_t mutexIndex = GetMutexItemIndex(name);
+   
+    if (mutexIndex == INFINITE) {
+        mutexItems.emplace_back(name);          // construct in-place
+        mutexIndex = GetMutexItemIndex(name);           
     }
-    if (m == nullptr) {
-        m = new MutexItem(name);
-        if (m != nullptr)
-            mutexItems.push_back(*m);
-    }
-    return m->Wait(millisec);
+    return mutexItems[mutexIndex].Wait(millisec);
 }
 
 DWORD SemaphoreHandler::ReleaseMutex(const wchar_t* name)
 {
-    MutexItem* m = nullptr;
-    for (auto mi : mutexItems) {
-        if (name == nullptr) {
-            if (mi.Name().size() == 0) {
-                m = &mi;
-                break;
-            }
-        }
-        else {
-            if (mi.Name() == name) {
-                m = &mi;
-                break;
-            }
-
-        }
-    }
-    if (m == nullptr) {
+    size_t mutexIndex = GetMutexItemIndex(name);
+    if (mutexIndex == INFINITE) {
         return FALSE;
     }
-    return m->Release();
+    return mutexItems[mutexIndex].Release();
 
 }
 

@@ -12,6 +12,8 @@ class MutexItem {
 public:
     MutexItem();
     MutexItem(const wchar_t* name);
+    //MutexItem(const MutexItem&) = delete;
+    MutexItem& operator=(const MutexItem&) = delete;
     ~MutexItem();
     const std::wstring& Name()const;
     DWORD Wait(DWORD millisec = INFINITE); // WAIT_OBJECT_0 =0, WAIT_TIMEOUT, WAIT_ABANDONED, WAIT_FAILED
@@ -29,13 +31,15 @@ public:
     const std::wstring& Name()const;
     DWORD Wait(DWORD millisec = INFINITE); // WAIT_OBJECT_0 =0, WAIT_TIMEOUT, WAIT_ABANDONED, WAIT_FAILED
     BOOL Release();
-};
+}; 
 
 class SemaphoreHandler {
     std::vector<MutexItem> mutexItems;
     std::vector<SemaphoreItem> semaphoreItems;
     static SemaphoreHandler* instance;
     SemaphoreHandler();
+    size_t GetMutexItemIndex(const wchar_t* name) const;
+
 public:
     DWORD WaitForMutex(const wchar_t* name = nullptr, DWORD millisec = INFINITE);
     DWORD ReleaseMutex(const wchar_t* name = nullptr);

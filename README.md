@@ -24,3 +24,6 @@ DCC Controller Windows
 21. V1.21.00 todo: speed value, speed increment +/-24, F26-F30
 22. V1.22.00 todo: macro execute
 23. V1.23.00 remove some output
+24. V1.24.00 explicite command
+25. V1.25.00 macro command step
+	1. 

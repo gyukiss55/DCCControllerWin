@@ -389,19 +389,6 @@ void InitComboBox(HWND hDlg)
         for (int i = 0; i < imp->GetContainer().Get().size(); ++i) {
             std::wstring name = imp->GetContainer().Get()[i].GetName();
             SendMessage(hWndCombo, CB_ADDSTRING, 0, (LPARAM)name.c_str ());
-            int index = (int)SendMessage(hWndCombo, CB_GETCURSEL, 0, 0);
-            if (index != CB_ERR) {
-                int length = (int)SendMessage(hComboBox, CB_GETLBTEXTLEN, (WPARAM)index, 0);
-
-                wchar_t* buffer = (wchar_t*)malloc((length  + 1)* 2);
-
-                if (buffer) {
-                    SendMessage(hComboBox, CB_GETLBTEXT, (WPARAM)index, (LPARAM)buffer);
-                    imp->ExecuteMacro(buffer);
-
-                    free(buffer);
-                }
-            }
         }
     }
 }
@@ -412,6 +399,17 @@ void ExecuteMacro(HWND hDlg)
     MacroImporter* imp = MacroImporter::GetInsance();
     if (imp) {
         HWND hWndCombo = GetDlgItem(hDlg, IDC_COMBO_MACRO);
+        WPARAM selIndex = (WPARAM)SendMessage(hWndCombo, CB_GETCURSEL, 0, 0);
+
+        if (selIndex != CB_ERR) {
+            wchar_t buffer[255];
+            memset(buffer, 0, sizeof(buffer));
+
+            SendMessageW(hWndCombo, CB_GETLBTEXT, selIndex, (LPARAM)buffer);
+            imp->ExecuteMacro(buffer);
+            
+        }
+
     }
 }
 

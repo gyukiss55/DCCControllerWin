@@ -105,7 +105,8 @@ int MacroImporter::ExecuteMacro(const wchar_t*name)
 {
 	for (int i = 0; i < container.Get().size(); ++i)
 	{
-		if (container.Get()[i].GetName() == name) {
+		const std::wstring& nameItem = container.Get()[i].GetName();
+		if (wcscmp(nameItem.c_str(), name) == 0) {
 			OutputDebugString(L"Execute:");
 			OutputDebugString(name);
 			return 0;

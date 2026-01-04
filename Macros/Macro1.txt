@@ -30,5 +30,5 @@
 #Delay=2
 #F1=Off // Hang ki
 #Delay=2
-#F0=Off // Hang ki
+#F0=Off // fény ki
 #F3=Off // vezető állás

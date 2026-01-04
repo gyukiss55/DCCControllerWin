@@ -42,6 +42,10 @@ class MacroImporter {
 	bool ParseMacro(const std::string& text, MacroDef& macroDef) const;
 
 	static MacroImporter* instance;
+	int ExecuteCommand(int index, const std::wstring& cmd) const;
+	int SendCommand(const std::wstring& ipAddress,
+					const std::wstring& channel,
+					const std::string& command) const;
 
 public:
 	uint32_t Import();

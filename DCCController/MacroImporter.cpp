@@ -1,9 +1,15 @@
 // MacroImporter.cpp
 
 #include <Windows.h>
+#include <cwchar>
+#include <format>
+#include <string>
+
 
 #include "MacroImporter.h"
 #include "Win32Utilities.h"
+#include "SendURL.h"
+#include "MapCommand.h"
 
 MacroImporter* MacroImporter::instance = nullptr;
 
@@ -109,12 +115,84 @@ int MacroImporter::ExecuteMacro(const wchar_t*name)
 		if (wcscmp(nameItem.c_str(), name) == 0) {
 			OutputDebugString(L"Execute:");
 			OutputDebugString(name);
+			for (const auto& cmd : container.Get()[i].GetCommands()) {
+				OutputDebugString(L"\r\n");
+				OutputDebugString(cmd.c_str());
+				ExecuteCommand(i, cmd);
+			}
 			return 0;
 		}
 	}
 	return -1;
 }
 
+int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
+{
+	const std::wstring& ipAddress = container.Get()[index].GetIP();
+	const std::wstring& channel = container.Get()[index].GetChannel();
+	const std::wstring& devAddress = container.Get()[index].GetAddress();
+
+	int n1 = 0;
+	int v1 = 0;
+	int ret = 0;
+	bool status = false;
+	bool direction = false; // false = forward, true = backward
+	int channelNr = std::stoi(channel);
+
+	ret = swscanf_s(cmd.c_str(), L"#F%d=On", &n1);
+	if (ret == 1) 
+		status = true;
+	else {
+		ret = swscanf_s(cmd.c_str(), L"#F%d=Off", &n1);
+		if (ret == 1) status = false;
+	}
+	if (ret == 1) {
+		int devNum = std::stoi(devAddress);
+		//std::wstring funcNum = n1;
+		std::string command = ToggleFunction(devNum,n1,status?1:0);
+		return SendCommand(ipAddress, channel, command);
+	}
+
+	ret = swscanf_s(cmd.c_str(), L"#Forward=True");
+	if (ret == 1)
+		direction = false;
+	else {
+		ret = swscanf_s(cmd.c_str(), L"#Forward=False");
+		if (ret == 1) direction = true;
+	}
+	if (ret == 1) return 0; // direction only setting
+	
+	ret = swscanf_s(cmd.c_str(), L"#Speed=%d", &v1);
+	int dirValue = direction ? 0x40 : 0;
+	if (ret == 1) {
+		if (v1 >= 0 && v1 <= 28) {
+			int devAddrNum = std::stoi(devAddress);
+			std::string command = FormatString("%02X%02X", devAddrNum, v1 + dirValue);
+			return SendCommand(ipAddress, channel, command);
+		}
+		return 0; // speed setting
+	}
+	double dt = 0.0;
+	ret = swscanf_s(cmd.c_str(), L"#Delay=%lf", &dt);
+	if (ret == 1) {
+		DWORD ti = (DWORD)(dt * 1000.0);
+		// speed settingSleep((DWORD)(dt * 1000.0));
+		Sleep(ti);
+		return 0;
+	}
+
+	return -1;
+}
+
+int MacroImporter::SendCommand(
+	const std::wstring& ipAddress,
+	const std::wstring& channel,
+	const std::string& command) const
+{
+	std::string strReceive;
+	SendURL(WStringToString(ipAddress).c_str(), WStringToString(channel).c_str(), command.c_str(), strReceive, strReceive);
+	return 0;
+}
 
 const MacroDefContainer& MacroImporter::GetContainer() const
 {

@@ -35,7 +35,7 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK    DCCControlDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+//INT_PTR CALLBACK    DCCControlDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 void ShowStatus(HWND hWnd, HDC hDC);
 void RefreshStatus(HWND hWnd);

@@ -63,6 +63,9 @@
     <ClInclude Include="SemaphoreHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MapCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SendURL.cpp">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SemaphoreHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapCommand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

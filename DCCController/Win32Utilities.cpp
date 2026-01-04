@@ -4,10 +4,18 @@
 #include <tchar.h>
 #include <stdio.h>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <iostream>
 
+
 #include "Win32Utilities.h"
+
+void TestCPP17()
+{
+    std::string_view sv = "C++17 OK";
+    std::cout << sv << '\n';
+}
 
 void EnumerateFilesInDirectory(const TCHAR* directoryPath, std::vector<std::wstring>& result) {
     result.clear();
@@ -170,3 +178,45 @@ std::wstring ConvertUTF8ToUnicode(const std::string& utf8Str) {
 
     return wideStr;
 }
+
+
+std::string WStringToString(const std::wstring& w)
+{
+    if (w.empty()) return {};
+
+    int size = WideCharToMultiByte(
+        CP_ACP, 0,
+        w.c_str(), -1,
+        nullptr, 0,
+        nullptr, nullptr
+    );
+
+    std::string result(size, '\0');
+
+    WideCharToMultiByte(
+        CP_UTF8, 0,
+        w.c_str(), -1,
+        result.data(), size,
+        nullptr, nullptr
+    );
+
+    return result;
+}
+
+std::string FormatString(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    // Get the size needed
+    int size = vsnprintf(nullptr, 0, format, args);
+    va_end(args);
+    if (size < 0) {
+        return std::string();
+    }
+    std::string result(size, '\0');
+    va_start(args, format);
+    vsnprintf(&result[0], size + 1, format, args);
+    va_end(args);
+    return result;
+}
+

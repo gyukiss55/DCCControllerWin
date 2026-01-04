@@ -20,3 +20,5 @@ std::wstring ConvertUTF8ToUnicode(const std::string& utf8Str);
 std::string WStringToString(const std::wstring& w);
 
 std::string FormatString(const char* format, ...);
+
+bool AppendTimeStamp(std::string& dccCommand);

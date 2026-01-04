@@ -2,6 +2,7 @@
 #Name=DB 184 indítás
 #IP=192.168.50.131
 #Address=10
+#Channel=0
 #F0=On // fény be
 #F1=On // Hang be
 #Delay=1.5

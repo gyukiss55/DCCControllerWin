@@ -28,3 +28,4 @@ DCC Controller Windows
 25. V1.25.00 macro command step
 26. V1.26.00 mutex fixing
 27. V1.27.00 macro command step 2
+28. V1.28.00 macro command step 3 

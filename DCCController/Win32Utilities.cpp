@@ -220,3 +220,14 @@ std::string FormatString(const char* format, ...)
     return result;
 }
 
+int32_t timeStampDCCCommands = 0;
+
+bool AppendTimeStamp(std::string& dccCommand)
+{
+    char buffer[32];
+    ++timeStampDCCCommands;
+    sprintf_s(buffer, "%04X", timeStampDCCCommands);
+    dccCommand += buffer;
+    return true;
+}
+

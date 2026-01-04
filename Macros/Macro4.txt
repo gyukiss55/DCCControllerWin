@@ -2,6 +2,7 @@
 #Name=DB186 indítás
 #IP=192.168.50.131
 #Address=11
+#Channel=0
 #F0=On // fény be
 #F1=On // Hang be
 #Delay=1.5

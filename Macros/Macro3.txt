@@ -2,6 +2,7 @@
 #Name=Ludmilla indítás
 #IP=192.168.50.131
 #Address=15
+#Channel=1
 #F0=On // fény be
 #F1=On // Hang be
 #Delay=1.5

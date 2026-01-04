@@ -139,6 +139,12 @@ int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
 	bool direction = false; // false = forward, true = backward
 	int channelNr = std::stoi(channel);
 
+	//ret = swscanf_s(cmd.c_str(), L"#Channel=%d", &channelNr);
+	//int dirValue = direction ? 0x40 : 0;
+	//if (ret == 1) {
+	//	return 0;
+	//}
+
 	ret = swscanf_s(cmd.c_str(), L"#F%d=On", &n1);
 	if (ret == 1) 
 		status = true;
@@ -149,25 +155,32 @@ int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
 	if (ret == 1) {
 		int devNum = std::stoi(devAddress);
 		//std::wstring funcNum = n1;
-		std::string command = ToggleFunction(devNum,n1,status?1:0);
+		std::string func = ToggleFunction(channelNr,n1,status?1:0);
+		std::string command = FormatString("%X%s", devNum, func.c_str());
+		if (command.length() % 2 == 1)
+			command = std::string("0") + command;
+		AppendTimeStamp(command);
 		return SendCommand(ipAddress, channel, command);
 	}
 
-	ret = swscanf_s(cmd.c_str(), L"#Forward=True");
-	if (ret == 1)
+	size_t pos = cmd.find(L"#Forward=True");
+	if (pos != std::string::npos) {
 		direction = false;
-	else {
-		ret = swscanf_s(cmd.c_str(), L"#Forward=False");
-		if (ret == 1) direction = true;
+		return 0;
 	}
-	if (ret == 1) return 0; // direction only setting
-	
+	pos = cmd.find(L"#Forward=False");
+	if (pos != std::string::npos) {
+		direction = true;
+		return 0;
+	}
+
 	ret = swscanf_s(cmd.c_str(), L"#Speed=%d", &v1);
 	int dirValue = direction ? 0x40 : 0;
 	if (ret == 1) {
 		if (v1 >= 0 && v1 <= 28) {
 			int devAddrNum = std::stoi(devAddress);
 			std::string command = FormatString("%02X%02X", devAddrNum, v1 + dirValue);
+			AppendTimeStamp(command);
 			return SendCommand(ipAddress, channel, command);
 		}
 		return 0; // speed setting
@@ -234,6 +247,14 @@ bool MacroImporter::ParseMacro(const std::string& text, MacroDef& macroDef) cons
 				pos = wstr.find(L"=");
 				pos++;
 				macroDef.SetAddress(wstr.substr(pos, pos2));
+				status |= 4;
+				continue;
+			}
+			pos = wstr.find(L"#Channel=");
+			if (pos != std::string::npos) {
+				pos = wstr.find(L"=");
+				pos++;
+				macroDef.SetChannel(wstr.substr(pos, pos2));
 				status |= 4;
 				continue;
 			}

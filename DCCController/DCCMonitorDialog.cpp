@@ -21,7 +21,6 @@
 #define SLIDER_MIN -15
 #define SLIDER_MAX 15
 
-int32_t timeStampDCCCommands = 0;
 
 bool SaveDCCDlgContent(HWND hDlg, std::string& feedback);
 bool ReadDCCDlgContent(HWND hDlg, std::string& feedback);
@@ -1139,15 +1138,6 @@ bool SendDCCSpeedCommand(HWND hDlg, uint32_t nodeCntrId, int node, int pos)
 
     SendURL(ipAddress.c_str(), nodeStr, dccCommand.c_str(), strReceive, strDCCFeedback);
     InvalidateRect(hWndMain, NULL, TRUE);
-    return true;
-}
-
-bool AppendTimeStamp(std::string& dccCommand)
-{
-    char buffer[32];
-    ++timeStampDCCCommands;
-    sprintf_s(buffer, "%04X", timeStampDCCCommands);
-    dccCommand += buffer;
     return true;
 }
 

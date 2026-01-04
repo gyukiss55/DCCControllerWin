@@ -1,6 +1,6 @@
 #PIKOMacro
 #Name=Ludmilla indítás
-#IP=192.168.50.131
+#IP=192.168.50.28
 #Address=15
 #Channel=1
 #F0=On // fény be

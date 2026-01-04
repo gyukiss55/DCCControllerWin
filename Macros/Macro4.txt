@@ -1,6 +1,6 @@
 #PIKOMacro
 #Name=DB186 indítás
-#IP=192.168.50.131
+#IP=192.168.50.28
 #Address=11
 #Channel=0
 #F0=On // fény be

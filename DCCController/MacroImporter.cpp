@@ -129,7 +129,7 @@ int MacroImporter::ExecuteMacro(const wchar_t*name)
 int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
 {
 	const std::wstring& ipAddress = container.Get()[index].GetIP();
-	const std::wstring& channel = container.Get()[index].GetChannel();
+	std::wstring channel = container.Get()[index].GetChannel();
 	const std::wstring& devAddress = container.Get()[index].GetAddress();
 
 	int n1 = 0;
@@ -138,12 +138,7 @@ int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
 	bool status = false;
 	bool direction = false; // false = forward, true = backward
 	int channelNr = std::stoi(channel);
-
-	//ret = swscanf_s(cmd.c_str(), L"#Channel=%d", &channelNr);
-	//int dirValue = direction ? 0x40 : 0;
-	//if (ret == 1) {
-	//	return 0;
-	//}
+	channel = std::to_wstring(channelNr);
 
 	ret = swscanf_s(cmd.c_str(), L"#F%d=On", &n1);
 	if (ret == 1) 
@@ -160,7 +155,9 @@ int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
 		if (command.length() % 2 == 1)
 			command = std::string("0") + command;
 		AppendTimeStamp(command);
-		return SendCommand(ipAddress, channel, command);
+		ret = SendCommand(ipAddress, channel, command);
+		Sleep(100);
+		return ret;
 	}
 
 	size_t pos = cmd.find(L"#Forward=True");
@@ -175,13 +172,15 @@ int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
 	}
 
 	ret = swscanf_s(cmd.c_str(), L"#Speed=%d", &v1);
-	int dirValue = direction ? 0x40 : 0;
+	int dirValue = direction ? 0x40 : 0x60;
 	if (ret == 1) {
 		if (v1 >= 0 && v1 <= 28) {
 			int devAddrNum = std::stoi(devAddress);
 			std::string command = FormatString("%02X%02X", devAddrNum, v1 + dirValue);
 			AppendTimeStamp(command);
-			return SendCommand(ipAddress, channel, command);
+			ret =  SendCommand(ipAddress, channel, command);
+			Sleep(100);
+			return ret;
 		}
 		return 0; // speed setting
 	}
@@ -203,7 +202,9 @@ int MacroImporter::SendCommand(
 	const std::string& command) const
 {
 	std::string strReceive;
-	SendURL(WStringToString(ipAddress).c_str(), WStringToString(channel).c_str(), command.c_str(), strReceive, strReceive);
+	std::string strIPAddress = WStringToString(ipAddress);
+	strIPAddress.resize(strIPAddress.size() - 2);
+	SendURL(strIPAddress.c_str(), WStringToString(channel).c_str(), command.c_str(), strReceive, strReceive);
 	return 0;
 }
 

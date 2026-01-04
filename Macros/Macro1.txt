@@ -1,6 +1,6 @@
 #PIKOMacro
 #Name=V43 indítás
-#IP=192.168.50.131
+#IP=192.168.50.28
 #Address=43
 #Channel=3
 #F0=On // fény be
@@ -8,7 +8,13 @@
 #Delay=1.5
 #F3=On // vezető állás
 #Delay=2
+#F2=On // kürt
+#Delay=2
+#F2=Off // kürt
+#Delay=2
 #Forward=True
+#F12=On // motor
+#Delay=2
 #Speed=1
 #Delay=0.2
 #Speed=2
@@ -28,6 +34,15 @@
 #Speed=1
 #Delay=0.2
 #Speed=0
+#F12=Off // motor
+#Delay=2
+#F17=Off // hang 1
+#Delay=2
+#F17=Off // hang 1
+#Delay=2
+#F18=Off // hang 2
+#Delay=2
+#F18=Off // hang 2
 #Delay=2
 #F1=Off // Hang ki
 #Delay=2

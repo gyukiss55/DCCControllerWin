@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+
 class MacroDef {
 	std::wstring name;
 	std::wstring ip;

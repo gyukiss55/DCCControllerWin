@@ -2,7 +2,7 @@
 #Name=M62 indítás
 #IP=192.168.50.28
 #Address=14
-#Channel=2
+#Channel=3
 #F0=On // fény be
 #F1=On // Hang be
 #Delay=1.5

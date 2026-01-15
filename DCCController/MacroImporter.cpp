@@ -10,6 +10,8 @@
 #include "Win32Utilities.h"
 #include "SendURL.h"
 #include "MapCommand.h"
+#include "DCCController.h"
+
 
 MacroImporter* MacroImporter::instance = nullptr;
 
@@ -136,7 +138,7 @@ int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
 	int v1 = 0;
 	int ret = 0;
 	bool status = false;
-	bool direction = false; // false = forward, true = backward
+	static bool direction = false; // false = forward, true = backward
 	int channelNr = std::stoi(channel);
 	channel = std::to_wstring(channelNr);
 
@@ -175,10 +177,15 @@ int MacroImporter::ExecuteCommand(int index, const std::wstring& cmd) const
 	int dirValue = direction ? 0x40 : 0x60;
 	if (ret == 1) {
 		if (v1 >= 0 && v1 <= 28) {
+			if (v1 > 0)
+				v1 += 3;
+			int v0 = v1 % 2;
+			v1 = (v1 >> 1) + 0x10 * v0;
 			int devAddrNum = std::stoi(devAddress);
 			std::string command = FormatString("%02X%02X", devAddrNum, v1 + dirValue);
 			AppendTimeStamp(command);
 			ret =  SendCommand(ipAddress, channel, command);
+			OutputDebugStringA(command.c_str());
 			Sleep(100);
 			return ret;
 		}
@@ -204,7 +211,9 @@ int MacroImporter::SendCommand(
 	std::string strReceive;
 	std::string strIPAddress = WStringToString(ipAddress);
 	strIPAddress.resize(strIPAddress.size() - 2);
-	SendURL(strIPAddress.c_str(), WStringToString(channel).c_str(), command.c_str(), strReceive, strReceive);
+	SendURL(strIPAddress.c_str(), WStringToString(channel).c_str(), command.c_str(), strReceive, strDCCFeedback);
+	InvalidateRect(hWndMain, NULL, TRUE);
+	UpdateWindow(hWndMain);
 	return 0;
 }
 

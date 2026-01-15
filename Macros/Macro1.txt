@@ -2,7 +2,7 @@
 #Name=V43 indítás
 #IP=192.168.50.28
 #Address=43
-#Channel=3
+#Channel=0
 #F0=On // fény be
 #F1=On // Hang be
 #Delay=1.5
